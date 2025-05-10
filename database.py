@@ -2,26 +2,23 @@ import os
 import time
 import sqlite3
 from dotenv import load_dotenv
-from urllib.parse import urlparse
 from discord import ApplicationContext
+
 
 load_dotenv()
 
 class Database:
     def __init__(self):
-        # Ожидается, что DB_URI будет содержать путь к файлу базы данных SQLite.
         db_uri = os.getenv('DB_URI')
         if db_uri.startswith("sqlite:////"):
-            # Абсолютный путь, например: sqlite:////home/user/db.sqlite
             db_path = db_uri.replace("sqlite:////", "/", 1)
         elif db_uri.startswith("sqlite:///"):
-            # Относительный путь, например: sqlite:///db.sqlite
             db_path = db_uri.replace("sqlite:///", "", 1)
         else:
-            db_path = db_uri  # Если задан просто путь
+            db_path = db_uri
 
         self.connection = sqlite3.connect(db_path, check_same_thread=False)
-        self.connection.row_factory = lambda cursor, row: row  # Результаты в виде tuple
+        self.connection.row_factory = lambda cursor, row: row
         self.create_tables()
 
     def _execute_query(self, query, params=None):
