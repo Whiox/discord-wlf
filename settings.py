@@ -151,14 +151,27 @@ class Setting:
             ping_title = "Задержка бота"
 
         class Rand:
-            rand_image = ('https://cdn.discordapp.com/attachments/1266472308235571261/1309271448094773299/'
-                          'a922aa26e575735d59359ce3d3ab6cf9.png?ex=6740f98e&is=673fa80e&hm=73d524bae14997a'
-                          'c28a0f5a2a673e5cce3ad7765a0365743043c20b9446914fc&')
             rand_bad = "Вам пизда черти ебаные"
             rand_good = "Играйте пб умнички ;3"
             rand_desc_bad = "(Даже не пытайтесь дебики)"
             rand_desc_good = "(Попробуйте, хуже не будет ;3)"
             rand_embed = Embed()
+
+            images = [
+                'https://cdn.discordapp.com/attachments/1266472308235571261/1309271448094773299/'
+                'a922aa26e575735d59359ce3d3ab6cf9.png?ex=6740f98e&is=673fa80e&hm=73d524bae14997a'
+                          'c28a0f5a2a673e5cce3ad7765a0365743043c20b9446914fc&',
+
+                'https://tenor.com/view/%D0%BF%D0%BE%D0%BD%D0%B0%D0%B1%D0%B8%D1%80%D0%B0%D1%8E%D1%82-%D0%BF%'
+                'D0%BE%D0%BD%D0%B0%D0%B1%D0%B8%D1%80%D0%B0%D1%8E%D1%82-%D0%B2%D1%81%D1%8F%D0%BA%D0%B8%D1%85-%'
+                'D0%BF%D0%BE%D0%BD%D0%B0%D0%B1%D0%B8%D1%80%D0%B0%D1%8E%D1%82-%D0%B2%D1%81%D1%8F%D0%BA%D0%B8%D'
+                '1%85-%D0%BC%D0%B4-murder-drones-%D0%BF%D0%BE%D0%BD%D0%B0%D0%B1%D0%B8%D1%80%D0%B0%D1%8E%D1%82'
+                '-murder-drones-copper-9-gif-12858669765758162211'
+            ]
+
+            def get_image(self):
+                return random.choice(self.images)
+
 
         class Color:
             @staticmethod

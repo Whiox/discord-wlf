@@ -24,7 +24,7 @@ class Rand(commands.Cog):
         embed.title = Setting.Basic.Rand.rand_bad if randint(0, 1) == 0 else Setting.Basic.Rand.rand_good
         embed.description = Setting.Basic.Rand.rand_desc_bad if randint(0, 1) == 0 else Setting.Basic.Rand.rand_desc_good
         embed.color = Setting.get_color(ctx)
-        embed.set_image(url=Setting.Basic.Rand.rand_image)
+        embed.set_image(url=Setting.Basic.Rand().get_image())
         return [2, embed]
 
 
