@@ -162,11 +162,9 @@ class Setting:
                 'a922aa26e575735d59359ce3d3ab6cf9.png?ex=6740f98e&is=673fa80e&hm=73d524bae14997a'
                           'c28a0f5a2a673e5cce3ad7765a0365743043c20b9446914fc&',
 
-                'https://tenor.com/view/%D0%BF%D0%BE%D0%BD%D0%B0%D0%B1%D0%B8%D1%80%D0%B0%D1%8E%D1%82-%D0%BF%'
-                'D0%BE%D0%BD%D0%B0%D0%B1%D0%B8%D1%80%D0%B0%D1%8E%D1%82-%D0%B2%D1%81%D1%8F%D0%BA%D0%B8%D1%85-%'
-                'D0%BF%D0%BE%D0%BD%D0%B0%D0%B1%D0%B8%D1%80%D0%B0%D1%8E%D1%82-%D0%B2%D1%81%D1%8F%D0%BA%D0%B8%D'
-                '1%85-%D0%BC%D0%B4-murder-drones-%D0%BF%D0%BE%D0%BD%D0%B0%D0%B1%D0%B8%D1%80%D0%B0%D1%8E%D1%82'
-                '-murder-drones-copper-9-gif-12858669765758162211'
+                'https://cdn.discordapp.com/attachments/1101524758824230935/1371488190891950120/'
+                'image.png?ex=68235169&is=6821ffe9&hm=0e21de457bf4c13466a6cf4129843ba8023ab2313f'
+                'da5fe585e8a178cbca1ac1&'
             ]
 
             def get_image(self):
