@@ -271,19 +271,19 @@ class Setting:
             @staticmethod
             def get_embed():
                 return Embed(
-                    title="Ваш GIF-фаил"
+                    title="PNG"
                 )
 
         class Gif:
                 @staticmethod
                 def get_embed():
                     return Embed(
-                        title="Ваш PNG-фаил"
+                        title="GIT"
                     )
 
         class Reply:
             @staticmethod
             def get_embed():
                 return Embed(
-                    title="Ваш reply-GIF-фаил"
+                    title="reply-GIF"
                 )
