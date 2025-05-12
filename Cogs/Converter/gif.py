@@ -43,7 +43,7 @@ class Gif(commands.Cog):
                     result.seek(0)
 
             discord_file = discord.File(fp=result, filename=f"{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
-            embed.description = "Успешно конвертировано в GIF!"
+            embed.description = "Конвертировано в GIF"
             embed.set_image(url=f"attachment://{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
             return [4, embed, discord_file]
 

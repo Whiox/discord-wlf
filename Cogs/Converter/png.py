@@ -47,7 +47,7 @@ class Png(commands.Cog):
                     result.seek(0)
 
             discord_file = discord.File(fp=result, filename=f"{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.png")
-            embed.description = "Успешно конвертировано в PNG!"
+            embed.description = "Конвертировано в PNG"
             embed.set_image(url=f"attachment://{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.png")
             return [4, embed, discord_file]
 
@@ -92,7 +92,7 @@ class Png(commands.Cog):
                     result.seek(0)
 
             discord_file = discord.File(fp=result, filename=f"{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.png")
-            embed.description = "Успешно конвертировано в PNG!"
+            embed.description = "Конвертировано в PNG"
             embed.set_image(url=f"attachment://{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.png")
             return [4, embed, discord_file]
 
