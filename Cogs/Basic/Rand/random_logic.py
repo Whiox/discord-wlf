@@ -16,8 +16,8 @@ class RandomLogic():
 
     def get_description(self, result):
         if result:
-            return choice(rt.good_description)
-        return choice(rt.bad_descriptions)
+            return choice(rt.good_descriptions)
+        return choice(rt.bad_description)
 
     def get_image(self, result):
         if result:
