@@ -223,6 +223,7 @@ class Setting:
             help_command = {
                 'Basic': '`help`, `user`, `ping`, `color`, `mode`',
                 'Converter': '`gif`, `png`, `reply`',
+                'War Thunder': '`squadron`, `stats`'
             }
 
             help_data = {
@@ -242,6 +243,10 @@ class Setting:
                              'Конвертирует jpeg, webp, gif(первый кадр) изображения в png картинку\n\n'
                              '`reply`\n'
                              'Создать из png, jpeg, webp, gif изображений "reply" gif',
+                'War Thunder': '`squadron`\n'
+                               'Ищет полк по названию\n\n'
+                               'stats\n'
+                               'Выводит статистику игрока по нику'
             }
 
             @staticmethod
