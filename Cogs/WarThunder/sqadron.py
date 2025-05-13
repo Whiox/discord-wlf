@@ -29,9 +29,9 @@ class Squadron(commands.Cog):
         if data:
             embed.title = f"{data['name']}   {data['tag']}"
             embed.description = data['slogan']
-            embed.add_field(name='id', value=data['id'], inline=False)
-            embed.add_field(name='status', value=data['status'], inline=False)
-            embed.add_field(name='members', value=data['member_count'], inline=False)
+            embed.add_field(name='id', value=data['id'], inline=True)
+            embed.add_field(name='status', value=data['status'], inline=True)
+            embed.add_field(name='members', value=data['member_count'], inline=True)
 
         return [2, embed]
 
