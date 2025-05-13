@@ -37,7 +37,7 @@ class Stats(commands.Cog):
 
         embed.add_field(
             name="Соотношение убийств/смертей (Кд)",
-            value=f"{mode_stats['current']['kills_player']/mode_stats['current']['total_deaths']}",
+            value=f"{round(mode_stats['current']['kills_player']/mode_stats['current']['total_deaths'], 2)}",
             inline=False
         )
 
