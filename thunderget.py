@@ -92,7 +92,7 @@ def get_user_data(user_id: int) -> dict:
     def extract_tank_stats(data: dict) -> dict:
         return {
             'kills_total': data.get('kills_player_or_bot', {}).get('value_total', 0),
-            'kills_player': data.get('air_kills_player', {}).get('value_total', 0),
+            'kills_player': data.get('ground_kills_player', {}).get('value_total', 0) + data.get('air_kills_player', {}).get('value_total', 0),
             'total_sessions': data.get('each_player_session', {}).get('value_total', 0),
             'victories_sessions': data.get('each_player_victories', {}).get('value_total', 0),
             'total_deaths': data.get('ground_death', {}).get('value_total', 0) + data.get('air_death', {}).get('value_total', 0),
