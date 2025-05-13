@@ -27,8 +27,12 @@ class Stats(commands.Cog):
     ):
         embed = Embed(color=Setting.get_color(ctx))
 
-        user_id = user_search(username)['id']
-        user_stats = get_user_data(user_id)
+        user = user_search(username)
+
+        if user['id'] == 0:
+            embed.title = f"Не удалось найти игрока {username}"
+
+        user_stats = get_user_data(user['id'])
 
         mode_stats = user_stats['stats'][str(type).lower()][str(mode).lower()]
 
