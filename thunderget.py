@@ -40,6 +40,8 @@ def user_search(username: str, count: int = 2) -> dict:
         response['userid']
     except TypeError:
         response = response[0]
+    except KeyError:
+        return {'id': 0}
 
     context = {
         'name': response.get('nick', 0),

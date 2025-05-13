@@ -32,6 +32,8 @@ class Stats(commands.Cog):
         if user['id'] == 0:
             embed.title = f"Не удалось найти игрока {username}"
 
+            return [2, embed]
+
         user_stats = get_user_data(user['id'])
 
         mode_stats = user_stats['stats'][str(type).lower()][str(mode).lower()]
