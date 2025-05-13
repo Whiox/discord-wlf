@@ -81,7 +81,14 @@ class Stats(commands.Cog):
                 inline=False
             )
 
-        if not embed.fields:
+        if embed.fields:
+            embed.add_field(
+                name=f"Статистика от <t:{int(user_stats['timestamp'])}:F>",
+                value=f"Данные обновятся в течении 24 часов",
+                inline=False
+            )
+
+        else:
             embed.description = f"Статистика в {mode} для {type} не найдена"
 
         return [2, embed]

@@ -75,6 +75,9 @@ def get_user(user_id: int) -> dict:
 
 def get_user_data(user_id: int) -> dict:
     """Получить информацию о пользователе по user_id."""
+    url = f"https://api.thunderinsights.dk/v1/users/refresh/{user_id}"
+    response = requests.get(url)
+
     url = f'https://api.thunderinsights.dk/v1/users/direct/{user_id}'
     response = requests.get(url).json()
 
@@ -108,6 +111,7 @@ def get_user_data(user_id: int) -> dict:
     leaderboard = response['leaderboard']
 
     context = {
+        'timestamp': response['timestamp'],
         'username': response['nick'],
         'id': response['userid'],
         'clan': {
