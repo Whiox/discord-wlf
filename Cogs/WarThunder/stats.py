@@ -35,41 +35,48 @@ class Stats(commands.Cog):
         embed.title = f"{user_stats['username']} {user_stats['id']}"
         embed.description = f"Статистика в {mode} для {type}"
 
-        embed.add_field(
-            name="Соотношение убийств/смертей (Кд)",
-            value=f"{round(mode_stats['current']['kills_player']/mode_stats['current']['total_deaths'], 2)}",
-            inline=False
-        )
+        if mode_stats['current']['kills_player'] and mode_stats['current']['total_deaths']:
+            embed.add_field(
+                name="Соотношение убийств/смертей (Кд)",
+                value=f"{round(mode_stats['current']['kills_player']/mode_stats['current']['total_deaths'], 2)}",
+                inline=False
+            )
 
-        embed.add_field(
-            name="Количество игр",
-            value=f"{mode_stats['current']['total_sessions']}",
-            inline=True
-        )
+        if mode_stats['current']['total_sessions'] and mode_stats['current']['victories_sessions']:
+            embed.add_field(
+                name="Количество игр",
+                value=f"{mode_stats['current']['total_sessions']}",
+                inline=True
+            )
 
-        embed.add_field(
-            name="Выйгранные игры",
-            value=f"{mode_stats['current']['victories_sessions']}",
-            inline=True
-        )
+            embed.add_field(
+                name="Выйгранные игры",
+                value=f"{mode_stats['current']['victories_sessions']}",
+                inline=True
+            )
 
-        embed.add_field(
-            name="Процент побед",
-            value=f"{round(int(mode_stats['current']['victories_sessions'])/int(mode_stats['current']['total_sessions']) * 100, 2)}%",
-            inline=True
-        )
+            embed.add_field(
+                name="Процент побед",
+                value=f"{round(int(mode_stats['current']['victories_sessions'])/int(mode_stats['current']['total_sessions']) * 100, 2)}%",
+                inline=True
+            )
 
-        embed.add_field(
-            name="Среднее место в команде",
-            value=f"{round(float(mode_stats['current']['relative_position']) * 100, 5)}%",
-            inline=False
-        )
+        if mode_stats['current']['relative_position']:
+            embed.add_field(
+                name="Среднее место в команде",
+                value=f"{round(float(mode_stats['current']['relative_position']) * 100, 5)}%",
+                inline=False
+            )
 
-        embed.add_field(
-            name="Средний счёт",
-            value=f"{int(mode_stats['current']['average_score'])}",
-            inline=False
-        )
+        if mode_stats['current']['average_score']:
+            embed.add_field(
+                name="Средний счёт",
+                value=f"{int(mode_stats['current']['average_score'])}",
+                inline=False
+            )
+
+        if not embed.fields:
+            embed.description = f"Статистика в {mode} для {type} не найдена"
 
         return [2, embed]
 
