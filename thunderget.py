@@ -91,12 +91,16 @@ def get_user_data(user_id: int) -> dict:
 
     def extract_tank_stats(data: dict) -> dict:
         return {
-            'kills': data.get('kills_player_or_bot', {}).get('value_total', 0),
-            'deaths': data.get('air_death', {}).get('value_total', 0),
-            'avg_score': data.get('averageScore', {}).get('value_total', 0),
-            'sessions': data.get('each_player_session', {}).get('value_total', 0),
-            'victories': data.get('each_player_victories', {}).get('value_total', 0),
-            'spawns': data.get('air_spawn', {}).get('value_total', 0)
+            'kills_total': data.get('kills_player_or_bot', {}).get('value_total', 0),
+            'kills_player': data.get('air_kills_player', {}).get('value_total', 0),
+            'total_sessions': data.get('each_player_session', {}).get('value_total', 0),
+            'victories_sessions': data.get('each_player_victories', {}).get('value_total', 0),
+            'total_deaths': data.get('ground_death', {}).get('value_total', 0) + data.get('air_death', {}).get('value_total', 0),
+            'air_deaths': data.get('air_death', {}).get('value_total', 0),
+            'ground_deaths': data.get('ground_death', {}).get('value_total', 0),
+            'average_score': data.get('averageScore', {}).get('value_total', 0),
+            'total_spawns': data.get('ground_spawn', {}).get('value_total', 0) + data.get('air_spawn', {}).get('value_total', 0),
+            'relative_position': data.get('averageRelativePosition', {}).get('value_total', 0),
         }
 
     leaderboard = response['leaderboard']
