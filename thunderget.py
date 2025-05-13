@@ -63,7 +63,7 @@ def get_user(user_id: int) -> dict:
 
     context = {
         'name': response.get('nick', 0),
-        'id': response['_id'],
+        'id': response.get('_id', 0),
         'clan_Tag': response.get('clanTag', 0),
         'clan_name': response.get('clanName', 0)
     }
