@@ -42,10 +42,10 @@ def user_search(username: str, count: int = 2) -> dict:
         response = response[0]
 
     context = {
-        'name': response['nick'],
-        'id': response['userid'],
-        'clan_tag': response['clan_tag'],
-        'clan_name': response['clan_name']
+        'name': response.get('nick', 0),
+        'id': response.get('userid', 0),
+        'clan_Tag': response.get('clanTag', 0),
+        'clan_name': response.get('clanName', 0)
     }
 
     return context
@@ -62,10 +62,10 @@ def get_user(user_id: int) -> dict:
     response = response[str(user_id)]
 
     context = {
-        'name': response['nick'],
-        'id': str(user_id),
-        'clan_Tag': response['clanTag'],
-        'clan_name': response['clanName']
+        'name': response.get('nick', 0),
+        'id': response['_id'],
+        'clan_Tag': response.get('clanTag', 0),
+        'clan_name': response.get('clanName', 0)
     }
 
     return context
@@ -109,9 +109,9 @@ def get_user_data(user_id: int) -> dict:
         'username': response['nick'],
         'id': response['userid'],
         'clan': {
-            'clan_id': response['clanId'],
-            'clan_role': response['clanMemberRole'],
-            'clan_tag': response['clanName'],
+            'clan_id': response.get('clanId', 0),
+            'clan_role': response.get('clanMemberRole', 0),
+            'clan_tag': response.get('clanName', 0),
         },
         'data': {
             'last_day': response['lastDay'],
