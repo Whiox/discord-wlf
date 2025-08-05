@@ -61,7 +61,7 @@ class Relanguage(commands.Cog):
         integration_types=Setting.integration_types,
         contexts=Setting.contexts
     )
-    async def convert_to_png(self, ctx: discord.ApplicationContext, message: discord.Message):
+    async def rel(self, ctx: discord.ApplicationContext, message: discord.Message):
         private = Setting.get_private(ctx)
         if not ctx.response.is_done():
             await ctx.defer(ephemeral=private)
@@ -77,7 +77,7 @@ class Relanguage(commands.Cog):
 
         embed.title = result
 
-        return [2, embed]
+        await ctx.followup.send(embed=embed, ephemeral=private)
 
 
 def setup(bot):
