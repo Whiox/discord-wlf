@@ -81,31 +81,31 @@ def get_user_data(user_id: int) -> dict:
     url = f'https://api.thunderinsights.dk/v1/users/direct/{user_id}'
     response = requests.get(url).json()
 
-    def extract_air_stats(data: dict) -> dict:
+    def extract_air_stats(data: dict, period: str) -> dict:
         return {
-            'kills_total': data.get('kills_player_or_bot', {}).get('value_total', 0),
-            'kills_player': data.get('air_kills_player', {}).get('value_total', 0),
-            'total_sessions': data.get('each_player_session', {}).get('value_total', 0),
-            'victories_sessions': data.get('each_player_victories', {}).get('value_total', 0),
-            'total_deaths': data.get('air_death', {}).get('value_total', 0),
-            'air_deaths': data.get('air_death', {}).get('value_total', 0),
-            'average_score': data.get('averageScore', {}).get('value_total', 0),
-            'total_spawns': data.get('air_spawn', {}).get('value_total', 0),
-            'relative_position': data.get('averageRelativePosition', {}).get('value_total', 0),
+            'kills_total': data.get('kills_player_or_bot', {}).get(period, 0),
+            'kills_player': data.get('air_kills_player', {}).get(period, 0),
+            'total_sessions': data.get('each_player_session', {}).get(period, 0),
+            'victories_sessions': data.get('each_player_victories', {}).get(period, 0),
+            'total_deaths': data.get('air_death', {}).get(period, 0),
+            'air_deaths': data.get('air_death', {}).get(period, 0),
+            'average_score': data.get('averageScore', {}).get(period, 0),
+            'total_spawns': data.get('air_spawn', {}).get(period, 0),
+            'relative_position': data.get('averageRelativePosition', {}).get(period, 0),
         }
 
-    def extract_tank_stats(data: dict) -> dict:
+    def extract_tank_stats(data: dict, period: str) -> dict:
         return {
-            'kills_total': data.get('kills_player_or_bot', {}).get('value_total', 0),
-            'kills_player': data.get('ground_kills_player', {}).get('value_total', 0) + data.get('air_kills_player', {}).get('value_total', 0),
-            'total_sessions': data.get('each_player_session', {}).get('value_total', 0),
-            'victories_sessions': data.get('each_player_victories', {}).get('value_total', 0),
-            'total_deaths': data.get('ground_death', {}).get('value_total', 0) + data.get('air_death', {}).get('value_total', 0),
-            'air_deaths': data.get('air_death', {}).get('value_total', 0),
-            'ground_deaths': data.get('ground_death', {}).get('value_total', 0),
-            'average_score': data.get('averageScore', {}).get('value_total', 0),
-            'total_spawns': data.get('ground_spawn', {}).get('value_total', 0) + data.get('air_spawn', {}).get('value_total', 0),
-            'relative_position': data.get('averageRelativePosition', {}).get('value_total', 0),
+            'kills_total': data.get('kills_player_or_bot', {}).get(period, 0),
+            'kills_player': data.get('ground_kills_player', {}).get(period, 0) + data.get('air_kills_player', {}).get(period, 0),
+            'total_sessions': data.get('each_player_session', {}).get(period, 0),
+            'victories_sessions': data.get('each_player_victories', {}).get(period, 0),
+            'total_deaths': data.get('ground_death', {}).get(period, 0) + data.get('air_death', {}).get(period, 0),
+            'air_deaths': data.get('air_death', {}).get(period, 0),
+            'ground_deaths': data.get('ground_death', {}).get(period, 0),
+            'average_score': data.get('averageScore', {}).get(period, 0),
+            'total_spawns': data.get('ground_spawn', {}).get(period, 0) + data.get('air_spawn', {}).get(period, 0),
+            'relative_position': data.get('averageRelativePosition', {}).get(period, 0),
         }
 
     leaderboard = response['leaderboard']
@@ -128,30 +128,30 @@ def get_user_data(user_id: int) -> dict:
         'stats': {
             'air': {
                 'rb': {
-                    'current': extract_air_stats(leaderboard['air_realistic']['value_total']),
-                    'month': extract_air_stats(leaderboard['air_realistic']['value_inhistory'])
+                    'current': extract_air_stats(leaderboard['air_realistic']['value_total'], 'value_total'),
+                    'month': extract_air_stats(leaderboard['air_realistic']['value_inhistory'], 'value_inhistory')
                 },
                 'sb': {
-                    'current': extract_air_stats(leaderboard['air_simulation']['value_total']),
-                    'month': extract_air_stats(leaderboard['air_simulation']['value_inhistory'])
+                    'current': extract_air_stats(leaderboard['air_simulation']['value_total'], 'value_total'),
+                    'month': extract_air_stats(leaderboard['air_simulation']['value_inhistory'], 'value_inhistory')
                 },
                 'ab': {
-                    'current': extract_air_stats(leaderboard['air_arcade']['value_total']),
-                    'month': extract_air_stats(leaderboard['air_arcade']['value_inhistory'])
+                    'current': extract_air_stats(leaderboard['air_arcade']['value_total'], 'value_total'),
+                    'month': extract_air_stats(leaderboard['air_arcade']['value_inhistory'], 'value_inhistory')
                 }
             },
             'ground': {
                 'rb': {
-                    'current': extract_tank_stats(leaderboard['tank_realistic']['value_total']),
-                    'month': extract_tank_stats(leaderboard['tank_realistic']['value_inhistory'])
+                    'current': extract_tank_stats(leaderboard['tank_realistic']['value_total'], 'value_total'),
+                    'month': extract_tank_stats(leaderboard['tank_realistic']['value_inhistory'], 'value_inhistory')
                 },
                 'sb': {
-                    'current': extract_tank_stats(leaderboard['tank_simulation']['value_total']),
-                    'month': extract_tank_stats(leaderboard['tank_simulation']['value_inhistory'])
+                    'current': extract_tank_stats(leaderboard['tank_simulation']['value_total'], 'value_total'),
+                    'month': extract_tank_stats(leaderboard['tank_simulation']['value_inhistory'], 'value_inhistory')
                 },
                 'ab': {
-                    'current': extract_tank_stats(leaderboard['tank_arcade']['value_total']),
-                    'month': extract_tank_stats(leaderboard['tank_arcade']['value_inhistory'])
+                    'current': extract_tank_stats(leaderboard['tank_arcade']['value_total'], 'value_total'),
+                    'month': extract_tank_stats(leaderboard['tank_arcade']['value_inhistory'], 'value_inhistory')
                 }
             }
         }

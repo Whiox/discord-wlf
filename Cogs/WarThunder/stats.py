@@ -22,8 +22,9 @@ class Stats(commands.Cog):
         self,
         ctx: ApplicationContext,
         username: Option(str, "Ник игрока"),
-        mode: Option(str, "Выберите игровой режим", choices=["AB", "RB", "SB"]),
-        type: Option(str, "Выберите тип игры", choices=["Air", "Ground"])
+        mode: Option(str, "Выберите игровой режим", choices=["AB", "RB", "SB"], default="RB"),
+        type: Option(str, "Выберите тип игры", choices=["Air", "Ground"], default="Ground"),
+        period: Option(str, "За какой период", choices=["Month", "All"], default="All"),
     ):
         embed = Embed(color=Setting.get_color(ctx))
 
@@ -34,50 +35,62 @@ class Stats(commands.Cog):
 
             return [2, embed]
 
+        period = 'current' if period == 'All' else 'month'
+
         user_stats = get_user_data(user['id'])
 
         mode_stats = user_stats['stats'][str(type).lower()][str(mode).lower()]
 
         embed.title = f"{user_stats['username']} {user_stats['id']}"
-        embed.description = f"Статистика в {mode} для {type}"
+        embed.description = f"Статистика в {mode} для {type} за {'всё время' if period == 'current' else 'месяц'}"
 
-        if mode_stats['current']['kills_player'] and mode_stats['current']['total_deaths']:
+        embed.add_field(name="Статистика игрока", value='', inline=False)
+
+        if mode_stats[period]['kills_player'] and mode_stats[period]['total_deaths']:
             embed.add_field(
-                name="Соотношение убийств/смертей (Кд)",
-                value=f"{round(mode_stats['current']['kills_player']/mode_stats['current']['total_deaths'], 2)}",
-                inline=False
+                name="К/Д",
+                value=f"{round(mode_stats[period]['kills_player']/mode_stats[period]['total_deaths'], 2)}",
+                inline=True
+            )
+        if mode_stats[period]['kills_player'] and mode_stats[period]['total_deaths']:
+            embed.add_field(
+                name="К/В",
+                value=f"{round(mode_stats[period]['kills_player']/mode_stats[period]['total_spawns'], 2)}",
+                inline=True
             )
 
-        if mode_stats['current']['total_sessions'] and mode_stats['current']['victories_sessions']:
+        embed.add_field(name="Статистика по играм", value='', inline=False)
+
+        if mode_stats[period]['total_sessions'] and mode_stats[period]['victories_sessions']:
             embed.add_field(
                 name="Количество игр",
-                value=f"{mode_stats['current']['total_sessions']}",
+                value=f"{mode_stats[period]['total_sessions']}",
                 inline=True
             )
 
             embed.add_field(
                 name="Выйгранные игры",
-                value=f"{mode_stats['current']['victories_sessions']}",
+                value=f"{mode_stats[period]['victories_sessions']}",
                 inline=True
             )
 
             embed.add_field(
                 name="Процент побед",
-                value=f"{round(int(mode_stats['current']['victories_sessions'])/int(mode_stats['current']['total_sessions']) * 100, 2)}%",
+                value=f"{round(int(mode_stats[period]['victories_sessions'])/int(mode_stats[period]['total_sessions']) * 100, 2)}%",
                 inline=True
             )
 
         if mode_stats['current']['relative_position']:
             embed.add_field(
                 name="Среднее место в команде",
-                value=f"{round(float(mode_stats['current']['relative_position']) * 100, 5)}%",
+                value=f"{round(float(mode_stats[period]['relative_position']) * 100, 5)}%",
                 inline=False
             )
 
-        if mode_stats['current']['average_score']:
+        if mode_stats[period]['average_score']:
             embed.add_field(
                 name="Средний счёт",
-                value=f"{int(mode_stats['current']['average_score'])}",
+                value=f"{int(mode_stats[period]['average_score'])}",
                 inline=False
             )
 

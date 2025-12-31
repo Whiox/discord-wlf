@@ -1,14 +1,11 @@
 import discord
 from discord.ext import commands
 from discord import ApplicationContext
-from discord.types import embed
 
 from settings import Setting
-from PIL import Image
-from io import BytesIO
 
 
-class Relanguage(commands.Cog):
+class ReLanguage(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.EN_TO_RU = {
@@ -81,4 +78,4 @@ class Relanguage(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Relanguage(bot))
+    bot.add_cog(ReLanguage(bot))

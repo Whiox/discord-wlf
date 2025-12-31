@@ -23,6 +23,7 @@ class Help(commands.Cog):
         embed.title = 'Чтобы узнать подробности выберите нужный вам раздел'
         embed.add_field(name="Basic", value=Setting.Basic.Help.help_command["Basic"], inline=False)
         embed.add_field(name="Converter", value=Setting.Basic.Help.help_command["Converter"], inline=False)
+        embed.add_field(name="War Thunder", value=Setting.Basic.Help.help_command["War Thunder"], inline=False)
         embed.color = Setting.get_color(ctx)
         return [8, embed, Setting.Basic.Help.get_view()]
 

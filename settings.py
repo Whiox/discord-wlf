@@ -218,6 +218,10 @@ class Setting:
                     label="Converter",
                     description="Получить информацию о функциях с конвертацией"
                 ),
+                discord.SelectOption(
+                    label="War Thunder",
+                    description="Получить информацию о возможностях функций с тундрой"
+                ),
             ]
 
             help_command = {
@@ -245,7 +249,7 @@ class Setting:
                              'Создать из png, jpeg, webp, gif изображений "reply" gif',
                 'War Thunder': '`squadron`\n'
                                'Ищет полк по названию\n\n'
-                               'stats\n'
+                               '`stats`\n'
                                'Выводит статистику игрока по нику'
             }
 
