@@ -1,30 +1,35 @@
-import discord
+
 from settings import Setting
-from discord import ApplicationContext, Embed, Option
+from discord import ApplicationContext, Embed, Option, SlashCommandGroup
 from discord.ext import commands
 
-from thunderget import get_user_data, user_search
+from thunderget import get_user_data, user_search, squadron_search
 
 
-class Stats(commands.Cog):
+class WarThunder(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.slash_command(
-        name='stats',
-        description='Статистика игрока по нику',
+    warthunder_group = SlashCommandGroup(
+        name="warthunder",
+        description="Статистика War Thunder",
         integration_types=Setting.integration_types,
         contexts=Setting.contexts,
         guild_ids=Setting.guilds_ids
+    )
+
+    @warthunder_group.command(
+        name='stats',
+        description='Статистика игрока по нику'
     )
     @Setting.measure_execution_time()
     async def stats(
         self,
         ctx: ApplicationContext,
-        username: Option(str, "Ник игрока"),
-        mode: Option(str, "Выберите игровой режим", choices=["AB", "RB", "SB"], default="RB"),
-        type: Option(str, "Выберите тип игры", choices=["Air", "Ground"], default="Ground"),
-        period: Option(str, "За какой период", choices=["Month", "All"], default="All"),
+        username: str = Option(str, "Ник игрока"),
+        mode: str = Option(str, "Выберите игровой режим", choices=["AB", "RB", "SB"], default="RB"),
+        vehicle_type: str = Option(str, "Выберите тип игры", name="type", choices=["Air", "Ground"], default="Ground"),
+        period: str = Option(str, "За какой период", choices=["Month", "All"], default="All"),
     ):
         embed = Embed(color=Setting.get_color(ctx))
 
@@ -39,10 +44,10 @@ class Stats(commands.Cog):
 
         user_stats = get_user_data(user['id'])
 
-        mode_stats = user_stats['stats'][str(type).lower()][str(mode).lower()]
+        mode_stats = user_stats['stats'][str(vehicle_type).lower()][str(mode).lower()]
 
         embed.title = f"{user_stats['username']} {user_stats['id']}"
-        embed.description = f"Статистика в {mode} для {type} за {'всё время' if period == 'current' else 'месяц'}"
+        embed.description = f"Статистика в {mode} для {vehicle_type} за {'всё время' if period == 'current' else 'месяц'}"
 
         embed.add_field(name="Статистика игрока", value='', inline=False)
 
@@ -102,10 +107,34 @@ class Stats(commands.Cog):
             )
 
         else:
-            embed.description = f"Статистика в {mode} для {type} не найдена"
+            embed.description = f"Статистика в {mode} для {vehicle_type} не найдена"
+
+        return [2, embed]
+
+
+    @warthunder_group.command(
+        name='squadron',
+        description='Поиск полка по названию'
+    )
+    @Setting.measure_execution_time()
+    async def squadron(
+            self,
+            ctx: ApplicationContext,
+            name: Option(str, "Название полка")
+    ):
+        data = squadron_search(name)
+
+        embed = Embed(color=Setting.get_color(ctx))
+
+        if data:
+            embed.title = f"{data['name']}   {data['tag']}"
+            embed.description = data['slogan']
+            embed.add_field(name='id', value=data['id'], inline=True)
+            embed.add_field(name='status', value=data['status'], inline=True)
+            embed.add_field(name='members', value=data['member_count'], inline=True)
 
         return [2, embed]
 
 
 def setup(bot):
-    bot.add_cog(Stats(bot))
+    bot.add_cog(WarThunder(bot))
