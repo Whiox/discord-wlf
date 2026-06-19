@@ -1,8 +1,9 @@
-FROM python:3.11-alpine
+FROM python:3.11-slim
 WORKDIR /bot
 
 COPY requirements.txt .
 
+RUN apk add --no-cache git
 RUN pip install -r requirements.txt
 
 COPY . .
