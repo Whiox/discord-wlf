@@ -3,7 +3,9 @@ WORKDIR /bot
 
 COPY requirements.txt .
 
-RUN apk add --no-cache git
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends git \
+    && rm -rf /var/lib/apt/lists/*
 RUN pip install -r requirements.txt
 
 COPY . .
