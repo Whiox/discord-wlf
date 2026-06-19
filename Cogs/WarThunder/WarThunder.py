@@ -118,9 +118,9 @@ class WarThunder(commands.Cog):
     )
     @Setting.measure_execution_time()
     async def squadron(
-            self,
-            ctx: ApplicationContext,
-            name: Option(str, "Название полка")
+        self,
+        ctx: ApplicationContext,
+        name: Option(str, "Название полка")
     ):
         data = squadron_search(name)
 

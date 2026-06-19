@@ -3,3 +3,4 @@ py-cord==2.6.1
 PyMySQL==1.1.1
 python-dotenv==1.0.1
 requests==2.32.3
+target-cloud-detect @ git+https://github.com/Whiox/TargetCloudDetect.git

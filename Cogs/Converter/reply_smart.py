@@ -1,0 +1,121 @@
+import discord
+from discord.ext import commands
+from discord import ApplicationContext
+from settings import Setting
+from PIL import Image, ImageDraw, ImageChops
+from io import BytesIO
+
+class ReplySmart(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    @commands.slash_command(
+        name='reply_smart',
+        description='`УМНО` Наложить шаблон на изображение',
+        integration_types=Setting.integration_types,
+        contexts=Setting.contexts
+    )
+    @Setting.measure_execution_time()
+    async def reply_smart(
+            self,
+            ctx: ApplicationContext,
+            file: discord.Option(discord.Attachment, description="Загрузите изображение (png, jeg, webp, gif)")
+    ):
+        private = Setting.get_private(ctx)
+        if not ctx.response.is_done():
+            await ctx.defer(ephemeral=private)
+
+        embed = Setting.Converter.Png.get_embed()
+        embed.color = discord.Color(Setting.get_color(ctx))
+
+        valid_formats = ['png', 'jpeg', 'jpg', 'webp', 'gif']
+        file_format = file.filename.lower().split('.')[-1]
+        if file_format not in valid_formats:
+            embed = discord.Embed(
+                title="Ошибка",
+                description="Неверный формат файла. Допустимые форматы: png, jpeg, webp, gif.",
+                color=Setting.get_color(ctx)
+            )
+            return [2, embed]
+
+        try:
+            file_bytes = await file.read()
+            result = Setting.Converter.ReplySmart.process_image(file_bytes)
+
+            output = BytesIO()
+            result.save(output, format="PNG")
+            output.seek(0)
+
+            discord_file = discord.File(fp=output, filename=f"{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
+            embed.set_image(url=f"attachment://{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
+            return [4, embed, discord_file]
+
+        except Exception as e:
+            print(f"Ошибка обработки изображения: {e}")
+            embed = discord.Embed(
+                title="Ошибка",
+                description="Произошла ошибка при обработке изображения.",
+                color=Setting.get_color(ctx)
+            )
+            return [2, embed]
+
+    @commands.message_command(
+        name="`УМНО`",
+        integration_types=Setting.integration_types,
+        contexts=Setting.contexts)
+    @Setting.measure_execution_time()
+    async def conv_to_reply_smart(
+            self,
+            ctx: ApplicationContext,
+            message: discord.Message,
+    ):
+        private = Setting.get_private(ctx)
+        if not ctx.response.is_done():
+            await ctx.defer(ephemeral=private)
+
+        embed = Setting.Converter.Png.get_embed()
+        embed.color = discord.Color(Setting.get_color(ctx))
+
+        if not message.attachments:
+            embed.description = "В этом сообщении нет вложений."
+            return [2, embed]
+
+        valid_formats = ['png', 'jpeg', 'jpg', 'webp', 'gif']
+        file = message.attachments[0]
+        file_format = file.filename.lower().split('.')[-1]
+        if file_format not in valid_formats:
+            embed = discord.Embed(
+                title="Ошибка",
+                description="Неверный формат файла. Допустимые форматы: png, jpeg, webp, gif.",
+                color=Setting.get_color(ctx)
+            )
+            return [2, embed]
+
+        try:
+            file_bytes = await file.read()
+            result = Setting.Converter.ReplySmart.process_image(file_bytes)
+
+            output = BytesIO()
+            result.save(output, format="PNG")
+            output.seek(0)
+
+            discord_file = discord.File(fp=output, filename=f"{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
+            embed = discord.Embed(
+                title="Обработанное изображение",
+                color=Setting.get_color(ctx)
+            )
+            embed.set_image(url=f"attachment://{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
+            return [4, embed, discord_file]
+
+        except Exception as e:
+            print(f"Ошибка обработки изображения: {e}")
+            embed = discord.Embed(
+                title="Ошибка",
+                description="Произошла ошибка при обработке изображения.",
+                color=Setting.get_color(ctx)
+            )
+            return [2, embed]
+
+
+def setup(bot):
+    bot.add_cog(ReplySmart(bot))
