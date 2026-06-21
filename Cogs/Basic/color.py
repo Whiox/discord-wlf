@@ -1,7 +1,35 @@
 from settings import Setting
-from discord import ApplicationContext
+from discord import ApplicationContext, Embed, Option
 from discord.ext import commands
-import discord
+
+
+default_colors = {
+    'dark_teal': '11806A',
+    'brand_green': '57F287',
+    'green': '2ECC71',
+    'dark_green': '1F8B4C',
+    'blue': '3498DB',
+    'dark_blue': '206694',
+    'gold': 'F1C40F',
+    'dark_gold': 'C27C0E',
+    'orange': 'E67E22',
+    'dark_orange': 'A84300',
+    'brand_red': 'ED4245',
+    'red': 'E74C3C',
+    'dark_red': '992D22',
+    'lighter_grey': '95A5A6',
+    'dark_grey': '607D8B',
+    'light_grey': '979C9F',
+    'darker_grey': '546E7A',
+    'og_blurple': '7289DA',
+    'blurple': '5865F2',
+    'greyple': '99AAB5',
+    'dark_theme': '36393F',
+    'fuchsia': 'EB459E',
+    'yellow': 'FEE75C',
+    'nitro_pink': 'F47FFF'
+}
+
 
 class Color(commands.Cog):
     def __init__(self, bot):
@@ -18,41 +46,35 @@ class Color(commands.Cog):
     async def color(
         self,
         ctx: ApplicationContext,
-        color: discord.Option(
+        color: Option(
             str,"Выберите один из стандартных цветов",
-            choices=list(Setting.Basic.Color.default_colors.keys()),
+            choices=list(default_colors.keys()),
             default=None
         ),
-        custom_color: discord.Option(
+        custom_color: Option(
             str,"Напишите свой Hex цвет",
             default=None
         )
     ):
-        if color and custom_color:
-            # Введено слишком много параметров
-            embed = Setting.Basic.Color.get_embed()
-            embed.description = f"Ошибка вводимого значения"
-            embed.add_field(name="Ошибка", value=f"Выберите только один из двух вариантов ввода - {color}", inline=False)
-            return [2, embed]
+        embed = Embed()
 
-        embed = Setting.Basic.Color.get_embed()
-        embed.description = f"Текущий цвет - {color}"
-
-        # Color = значение в словаре/кастомное
-        if color is not None and custom_color is None:
-            color = Setting.Basic.Color.default_colors[color]
-        elif custom_color is not None and color is None:
-            color = custom_color
-        else:
-            # Не было введено ни одного параметра
+        if bool(color) == bool(custom_color):
             embed.title = "Ваш цвет не был изменён"
             embed.description = f"Ошибка вводимого значения"
-            embed.add_field(name="Ошибка", value=f"Выберите один вариант ввода", inline=False)
+            embed.add_field(name="Ошибка", value=f"Выберите один из двух вариантов ввода - {color}", inline=False)
+            return [2, embed]
+
+        embed.description = f"Текущий цвет - {color}"
+
+        if color:
+            color = default_colors[color]
+        if custom_color:
+            color = custom_color
 
         try:
             # Меняем цвет
             embed.description = f"Текущий цвет - {color}"
-            embed.color = int(color, 16)
+            embed.colour = int(color, 16)
             Setting.set_color(ctx, color)
 
         except ValueError:
@@ -61,7 +83,7 @@ class Color(commands.Cog):
             embed.add_field(name="Ошибка", value=f"Введённый вами цвет не существует - "
                                                  f"{color if color else custom_color}", inline=False)
             embed.add_field(name="Используйте конвертер", value="Используйте любой rgb to hex конвертер", inline=False)
-            embed.color = Setting.get_color(ctx)
+            embed.colour = Setting.get_color(ctx)
         return [2, embed]
 
 

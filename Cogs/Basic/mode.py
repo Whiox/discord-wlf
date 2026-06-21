@@ -1,6 +1,6 @@
 import discord
 from settings import Setting
-from discord import ApplicationContext
+from discord import ApplicationContext, Embed
 from discord.ext import commands
 
 
@@ -19,13 +19,12 @@ class Mode(commands.Cog):
     async def mode(
         self,
         ctx: ApplicationContext,
-        private = discord.Option(str, "Выберите",
-                                 choices=["Включить режим", "Выключить режим"])
+        private = discord.Option(str, "Выберите", choices=["Приватный", "Публичный"])
     ):
-        embed = Setting.Basic.Mode.get_embed()
+        embed = Embed(title="Ваши настройки приватности были изменены")
         embed.color = discord.Color(Setting.get_color(ctx))
         private = (True if private == "Включить режим" else False)
-        embed.description = f"Значение для private - {private}"
+        embed.description = "Сообщения видны только вам" if private else "Сообщения видны всем"
         Setting.set_private(ctx, private)
         return [2, embed]
 

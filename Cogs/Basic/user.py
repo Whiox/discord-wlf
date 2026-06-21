@@ -1,6 +1,6 @@
 import discord
 from settings import Setting
-from discord import ApplicationContext
+from discord import ApplicationContext, Embed
 from discord.ext import commands
 
 
@@ -21,7 +21,7 @@ class User(commands.Cog):
         ctx: ApplicationContext,
         user: discord.Option(discord.User, name="пользователь")
     ):
-        embed = Setting.Basic.User.get_embed()
+        embed = Embed()
 
         embed.title = f"Информация о `@{user.name}`"
         embed.description = f"Id - {user.id}"

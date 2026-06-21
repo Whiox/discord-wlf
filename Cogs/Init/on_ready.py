@@ -1,5 +1,5 @@
 from discord.ext import commands
-from settings import Setting
+from Cogs.Basic.help import Help
 
 
 class OnReadyCog(commands.Cog):
@@ -8,7 +8,7 @@ class OnReadyCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        self.bot.add_view(Setting.Basic.Help.get_view())  # Добавляем view
+        self.bot.add_view(Help.get_view())  # Добавляем view
         print(f'We have logged in as {self.bot.user}')
 
 def setup(bot):

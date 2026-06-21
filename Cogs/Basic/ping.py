@@ -1,6 +1,6 @@
 import discord
 from settings import Setting
-from discord import ApplicationContext
+from discord import ApplicationContext, Embed
 from discord.ext import commands
 
 
@@ -24,7 +24,7 @@ class Ping(commands.Cog):
         ping = Setting.get_db_ping(ctx)
         ping_ms = round(ping * 1000, 2)
         ping_s = round(ping, 2)
-        embed = Setting.Basic.Ping.get_embed()
+        embed = Embed(title='Задержка бота')
         embed.color = discord.Color(Setting.get_color(ctx))
         embed.add_field(name="Задержка до бота" ,value=f'{latency * 1000:.2f}мс/{latency:.2f}с', inline=False)
         embed.add_field(name="Задержка до базы", value=f'{ping_ms}мс/{ping_s:.2f}с', inline=False)
