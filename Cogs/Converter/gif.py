@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from discord import ApplicationContext
+from discord import ApplicationContext, Embed
 from settings import Setting
 from PIL import Image
 from io import BytesIO
@@ -26,7 +26,7 @@ class Gif(commands.Cog):
         private = Setting.get_private(ctx)
         if not ctx.response.is_done():
             await ctx.defer(ephemeral=private)
-        embed = Setting.Converter.Gif.get_embed()
+        embed = Embed(title="GIF")
         embed.color = discord.Color(Setting.get_color(ctx))
 
         valid_formats = ['png', 'jpeg', 'jpg', 'webp']
@@ -63,7 +63,7 @@ class Gif(commands.Cog):
         if not ctx.response.is_done():
             await ctx.defer(ephemeral=private)
 
-        embed = Setting.Converter.Gif.get_embed()
+        embed = Embed(title="GIF")
         embed.color = discord.Color(Setting.get_color(ctx))
 
         if not message.attachments:

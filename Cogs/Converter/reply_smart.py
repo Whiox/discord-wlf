@@ -1,22 +1,26 @@
 import discord
 from discord.ext import commands
-from discord import ApplicationContext
+from discord import ApplicationContext, Embed
 from settings import Setting
 from PIL import Image, ImageDraw, ImageChops
 from io import BytesIO
 
-class ReplySmart(commands.Cog):
+from target_cloud_detect import Model
+
+
+class BubbleAI(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.model = Model()
 
     @commands.slash_command(
-        name='reply_smart',
-        description='`УМНО` Наложить шаблон на изображение',
+        name='bubble_ai',
+        description='Добавить пузырь на изображение',
         integration_types=Setting.integration_types,
         contexts=Setting.contexts
     )
     @Setting.measure_execution_time()
-    async def reply_smart(
+    async def bubble_ai(
             self,
             ctx: ApplicationContext,
             file: discord.Option(discord.Attachment, description="Загрузите изображение (png, jeg, webp, gif)")
@@ -25,7 +29,7 @@ class ReplySmart(commands.Cog):
         if not ctx.response.is_done():
             await ctx.defer(ephemeral=private)
 
-        embed = Setting.Converter.Png.get_embed()
+        embed = Embed(title="GIF")
         embed.color = discord.Color(Setting.get_color(ctx))
 
         valid_formats = ['png', 'jpeg', 'jpg', 'webp', 'gif']
@@ -40,7 +44,7 @@ class ReplySmart(commands.Cog):
 
         try:
             file_bytes = await file.read()
-            result = Setting.Converter.ReplySmart.process_image(file_bytes)
+            result = self.model.predict_from_bytes(file_bytes)
 
             output = BytesIO()
             result.save(output, format="PNG")
@@ -60,11 +64,11 @@ class ReplySmart(commands.Cog):
             return [2, embed]
 
     @commands.message_command(
-        name="`УМНО`",
+        name="Добавить пузырь AI™",
         integration_types=Setting.integration_types,
         contexts=Setting.contexts)
     @Setting.measure_execution_time()
-    async def conv_to_reply_smart(
+    async def bubble_ai_menu(
             self,
             ctx: ApplicationContext,
             message: discord.Message,
@@ -73,7 +77,7 @@ class ReplySmart(commands.Cog):
         if not ctx.response.is_done():
             await ctx.defer(ephemeral=private)
 
-        embed = Setting.Converter.Png.get_embed()
+        embed = Embed(title="GIF")
         embed.color = discord.Color(Setting.get_color(ctx))
 
         if not message.attachments:
@@ -93,7 +97,7 @@ class ReplySmart(commands.Cog):
 
         try:
             file_bytes = await file.read()
-            result = Setting.Converter.ReplySmart.process_image(file_bytes)
+            result = self.model.predict_from_bytes(file_bytes)
 
             output = BytesIO()
             result.save(output, format="PNG")
@@ -118,4 +122,4 @@ class ReplySmart(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(ReplySmart(bot))
+    bot.add_cog(BubbleAI(bot))

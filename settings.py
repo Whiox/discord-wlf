@@ -10,9 +10,6 @@ from discord import IntegrationType
 from discord import ApplicationContext
 from discord import InteractionContextType
 
-from target_cloud_detect import Model
-
-
 class Setting:
     db = Database()
 
@@ -129,42 +126,3 @@ class Setting:
                         await interaction.respond("Произошла ошибка при выполнении команды.", ephemeral=True)
             return wrapper
         return decorator
-
-
-    class Converter:
-
-        class Png:
-            @staticmethod
-            def get_embed():
-                return Embed(
-                    title="PNG"
-                )
-
-        class Gif:
-                @staticmethod
-                def get_embed():
-                    return Embed(
-                        title="GIT"
-                    )
-
-        class Reply:
-            @staticmethod
-            def get_embed():
-                return Embed(
-                    title="reply-GIF"
-                )
-
-        class ReplySmart:
-            model = None
-
-            @staticmethod
-            def get_embed():
-                return Embed(
-                    title="reply-GIF"
-                )
-
-            @staticmethod
-            def process_image(bytes):
-                if not Setting.Converter.ReplySmart.model:
-                    Setting.Converter.ReplySmart.model = Model()
-                return Setting.Converter.ReplySmart.model.predict_from_bytes(bytes)
