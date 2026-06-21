@@ -1,6 +1,6 @@
-import discord
+
+from discord import ApplicationContext, Embed, Attachment, Option, File, Message
 from discord.ext import commands
-from discord import ApplicationContext
 
 from settings import Setting, DB
 
@@ -39,8 +39,8 @@ class ReLanguage(commands.Cog):
         private = DB.get_private(ctx)
         if not ctx.response.is_done():
             await ctx.defer(ephemeral=private)
-        embed = discord.Embed()
-        embed.color = discord.Color(DB.get_color(ctx))
+        embed = Embed()
+        embed.colour = DB.get_color(ctx)
 
         if any('а' <= ch <= 'я' or 'А' <= ch <= 'Я' or ch in "ёЁ" for ch in text):
             result = self.convert(text, self.RU_TO_EN)
@@ -58,12 +58,12 @@ class ReLanguage(commands.Cog):
         integration_types=Setting.integration_types,
         contexts=Setting.contexts
     )
-    async def rel(self, ctx: discord.ApplicationContext, message: discord.Message):
+    async def rel(self, ctx: ApplicationContext, message: Message):
         private = DB.get_private(ctx)
         if not ctx.response.is_done():
             await ctx.defer(ephemeral=private)
-        embed = discord.Embed()
-        embed.color = discord.Color(DB.get_color(ctx))
+        embed = Embed()
+        embed.colour = DB.get_color(ctx)
 
         text = message.content
 

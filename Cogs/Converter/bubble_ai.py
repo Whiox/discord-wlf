@@ -1,10 +1,11 @@
-import discord
-from discord.ext import commands
-from discord import ApplicationContext, Embed
-from settings import Setting, DB
-from io import BytesIO
 
+from discord import ApplicationContext, Embed, Attachment, Option, File, Message
+from discord.ext import commands
+
+from io import BytesIO
 from target_cloud_detect import Model
+
+from settings import Setting, DB
 
 
 class BubbleAI(commands.Cog):
@@ -22,19 +23,19 @@ class BubbleAI(commands.Cog):
     async def bubble_ai(
             self,
             ctx: ApplicationContext,
-            file: discord.Option(discord.Attachment, description="Загрузите изображение (png, jeg, webp, gif)")
+            file: Option(Attachment, description="Загрузите изображение (png, jeg, webp, gif)")
     ):
         private = DB.get_private(ctx)
         if not ctx.response.is_done():
             await ctx.defer(ephemeral=private)
 
         embed = Embed(title="GIF")
-        embed.color = discord.Color(DB.get_color(ctx))
+        embed.colour = DB.get_color(ctx)
 
         valid_formats = ['png', 'jpeg', 'jpg', 'webp', 'gif']
         file_format = file.filename.lower().split('.')[-1]
         if file_format not in valid_formats:
-            embed = discord.Embed(
+            embed = Embed(
                 title="Ошибка",
                 description="Неверный формат файла. Допустимые форматы: png, jpeg, webp, gif.",
                 color=DB.get_color(ctx)
@@ -49,13 +50,13 @@ class BubbleAI(commands.Cog):
             result.save(output, format="PNG")
             output.seek(0)
 
-            discord_file = discord.File(fp=output, filename=f"{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
+            discord_file = File(fp=output, filename=f"{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
             embed.set_image(url=f"attachment://{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
             return [4, embed, discord_file]
 
         except Exception as e:
             print(f"Ошибка обработки изображения: {e}")
-            embed = discord.Embed(
+            embed = Embed(
                 title="Ошибка",
                 description="Произошла ошибка при обработке изображения.",
                 color=DB.get_color(ctx)
@@ -70,14 +71,14 @@ class BubbleAI(commands.Cog):
     async def bubble_ai_menu(
             self,
             ctx: ApplicationContext,
-            message: discord.Message,
+            message: Message,
     ):
         private = DB.get_private(ctx)
         if not ctx.response.is_done():
             await ctx.defer(ephemeral=private)
 
         embed = Embed(title="GIF")
-        embed.color = discord.Color(DB.get_color(ctx))
+        embed.colour = Color(DB.get_color(ctx))
 
         if not message.attachments:
             embed.description = "В этом сообщении нет вложений."
@@ -87,7 +88,7 @@ class BubbleAI(commands.Cog):
         file = message.attachments[0]
         file_format = file.filename.lower().split('.')[-1]
         if file_format not in valid_formats:
-            embed = discord.Embed(
+            embed = Embed(
                 title="Ошибка",
                 description="Неверный формат файла. Допустимые форматы: png, jpeg, webp, gif.",
                 color=DB.get_color(ctx)
@@ -102,8 +103,8 @@ class BubbleAI(commands.Cog):
             result.save(output, format="PNG")
             output.seek(0)
 
-            discord_file = discord.File(fp=output, filename=f"{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
-            embed = discord.Embed(
+            discord_file = File(fp=output, filename=f"{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
+            embed = Embed(
                 title="Обработанное изображение",
                 color=DB.get_color(ctx)
             )
@@ -112,7 +113,7 @@ class BubbleAI(commands.Cog):
 
         except Exception as e:
             print(f"Ошибка обработки изображения: {e}")
-            embed = discord.Embed(
+            embed = Embed(
                 title="Ошибка",
                 description="Произошла ошибка при обработке изображения.",
                 color=DB.get_color(ctx)

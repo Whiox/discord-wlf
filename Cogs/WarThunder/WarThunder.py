@@ -1,9 +1,10 @@
 
-from settings import Setting, DB
 from discord import ApplicationContext, Embed, Option, SlashCommandGroup
 from discord.ext import commands
 
 from thunderget import get_user_data, user_search, squadron_search
+
+from settings import Setting, DB
 
 
 class WarThunder(commands.Cog):

@@ -1,9 +1,11 @@
-import discord
+
+from discord import ApplicationContext, Embed, Attachment, Option, File, Message
 from discord.ext import commands
-from discord import ApplicationContext, Embed
-from settings import Setting, DB
-from PIL import Image
+
 from io import BytesIO
+from PIL import Image
+
+from settings import Setting, DB
 
 
 class Png(commands.Cog):
@@ -20,14 +22,13 @@ class Png(commands.Cog):
     async def png(
             self,
             ctx: ApplicationContext,
-            file: discord.Option(discord.Attachment,
-                                 description="Выберите изображение для конвертации (jpeg, webp, gif)")
+            file: Option(Attachment, description="Выберите изображение для конвертации (jpeg, webp, gif)")
     ):
         private = DB.get_private(ctx)
         if not ctx.response.is_done():
             await ctx.defer(ephemeral=private)
         embed = Embed(title="PNG")
-        embed.color = discord.Color(DB.get_color(ctx))
+        embed.colour = DB.get_color(ctx)
 
         valid_formats = ['jpeg', 'jpg', 'webp', 'gif']
         if not file.filename.lower().split('.')[-1] in valid_formats:
@@ -46,7 +47,7 @@ class Png(commands.Cog):
                     image.save(result, format="PNG")
                     result.seek(0)
 
-            discord_file = discord.File(fp=result, filename=f"{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.png")
+            discord_file = File(fp=result, filename=f"{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.png")
             embed.description = "Конвертировано в PNG"
             embed.set_image(url=f"attachment://{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.png")
             return [4, embed, discord_file]
@@ -61,12 +62,12 @@ class Png(commands.Cog):
         integration_types=Setting.integration_types,
         contexts=Setting.contexts
     )
-    async def convert_to_png(self, ctx: discord.ApplicationContext, message: discord.Message):
+    async def convert_to_png(self, ctx: ApplicationContext, message: Message):
         private = DB.get_private(ctx)
         if not ctx.response.is_done():
             await ctx.defer(ephemeral=private)
         embed = Embed(title="PNG")
-        embed.color = discord.Color(DB.get_color(ctx))
+        embed.colour = DB.get_color(ctx)
 
         if not message.attachments:
             embed.description = "В этом сообщении нет вложений."
@@ -91,7 +92,7 @@ class Png(commands.Cog):
                     image.save(result, format="PNG")
                     result.seek(0)
 
-            discord_file = discord.File(fp=result, filename=f"{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.png")
+            discord_file = File(fp=result, filename=f"{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.png")
             embed.description = "Конвертировано в PNG"
             embed.set_image(url=f"attachment://{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.png")
             return [4, embed, discord_file]

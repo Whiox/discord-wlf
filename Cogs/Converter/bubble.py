@@ -1,9 +1,12 @@
-import discord
+
+from discord import ApplicationContext, Embed, Attachment, Option
 from discord.ext import commands
-from discord import ApplicationContext, Embed
-from settings import Setting, DB
-from PIL import Image, ImageDraw, ImageChops
+
 from io import BytesIO
+from PIL import Image, ImageDraw, ImageChops
+
+from settings import Setting, DB
+
 
 class Bubble(commands.Cog):
     def __init__(self, bot):
@@ -19,17 +22,15 @@ class Bubble(commands.Cog):
     async def bubble(
             self,
             ctx: ApplicationContext,
-            file: discord.Option(discord.Attachment,
-                                 description="Загрузите изображение (png, jeg, webp, gif)"),
-            height: discord.Option(int, description="Высота в процентах (целое число от 0 до 100)",
-                                   default=20)
+            file: Option(Attachment, description="Загрузите изображение (png, jeg, webp, gif)"),
+            height: Option(int, description="Высота в процентах (целое число от 0 до 100)", default=20)
     ):
         private = DB.get_private(ctx)
         if not ctx.response.is_done():
             await ctx.defer(ephemeral=private)
 
         embed = Embed(title="GIF")
-        embed.color = discord.Color(DB.get_color(ctx))
+        embed.colour = DB.get_color(ctx)
 
         valid_formats = ['png', 'jpeg', 'jpg', 'webp', 'gif']
         file_format = file.filename.lower().split('.')[-1]
@@ -73,7 +74,7 @@ class Bubble(commands.Cog):
             await ctx.defer(ephemeral=private)
 
         embed = Embed(title="GIF")
-        embed.color = discord.Color(DB.get_color(ctx))
+        embed.colour = discord.Color(DB.get_color(ctx))
 
         if not message.attachments:
             embed.description = "В этом сообщении нет вложений."

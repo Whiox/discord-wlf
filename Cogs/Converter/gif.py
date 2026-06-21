@@ -1,9 +1,11 @@
-import discord
+
+from discord import ApplicationContext, Embed, Attachment, Option, File, Message
 from discord.ext import commands
-from discord import ApplicationContext, Embed
-from settings import Setting, DB
+
 from PIL import Image
 from io import BytesIO
+
+from settings import Setting, DB
 
 
 class Gif(commands.Cog):
@@ -20,14 +22,13 @@ class Gif(commands.Cog):
     async def gif(
             self,
             ctx: ApplicationContext,
-            file: discord.Option(discord.Attachment,
-                                 description="Выберите изображение для конвертации (png, jpeg, webp)")
+            file: Option(Attachment, description="Выберите изображение для конвертации (png, jpeg, webp)")
     ):
         private = DB.get_private(ctx)
         if not ctx.response.is_done():
             await ctx.defer(ephemeral=private)
         embed = Embed(title="GIF")
-        embed.color = discord.Color(DB.get_color(ctx))
+        embed.colour = DB.get_color(ctx)
 
         valid_formats = ['png', 'jpeg', 'jpg', 'webp']
         if not file.filename.lower().split('.')[-1] in valid_formats:
@@ -42,7 +43,7 @@ class Gif(commands.Cog):
                     image.save(result, format="GIF")
                     result.seek(0)
 
-            discord_file = discord.File(fp=result, filename=f"{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
+            discord_file = File(fp=result, filename=f"{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
             embed.description = "Конвертировано в GIF"
             embed.set_image(url=f"attachment://{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
             return [4, embed, discord_file]
@@ -58,13 +59,13 @@ class Gif(commands.Cog):
         contexts=Setting.contexts
     )
     @Setting.measure_execution_time()
-    async def convert_to_gif(self, ctx: discord.ApplicationContext, message: discord.Message):
+    async def convert_to_gif(self, ctx: ApplicationContext, message: Message):
         private = DB.get_private(ctx)
         if not ctx.response.is_done():
             await ctx.defer(ephemeral=private)
 
         embed = Embed(title="GIF")
-        embed.color = discord.Color(DB.get_color(ctx))
+        embed.colour = DB.get_color(ctx)
 
         if not message.attachments:
             embed.description = "В этом сообщении нет вложений."
@@ -88,8 +89,7 @@ class Gif(commands.Cog):
                     image.save(result, format="GIF")
                     result.seek(0)
 
-            discord_file = discord.File(fp=result,
-                                        filename=f"{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
+            discord_file = File(fp=result, filename=f"{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
             embed.set_image(url=f"attachment://{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
             return [4, embed, discord_file]
 

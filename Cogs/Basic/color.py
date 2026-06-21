@@ -1,6 +1,8 @@
-from settings import Setting, DB
+
 from discord import ApplicationContext, Embed, Option
 from discord.ext import commands
+
+from settings import Setting, DB
 
 
 default_colors = {

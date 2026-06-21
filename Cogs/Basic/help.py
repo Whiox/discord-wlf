@@ -1,7 +1,9 @@
-from settings import Setting, DB
+
 from discord import ApplicationContext, Embed, SelectOption
-from discord.ext import commands
 from discord.ui import select, View
+from discord.ext import commands
+
+from settings import Setting, DB
 
 
 class Help(commands.Cog):

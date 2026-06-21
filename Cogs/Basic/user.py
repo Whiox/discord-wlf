@@ -1,25 +1,26 @@
-import discord
-from settings import Setting, DB
-from discord import ApplicationContext, Embed
+
+from discord import ApplicationContext, Embed, Option, User
 from discord.ext import commands
 
+from settings import Setting, DB
 
-class User(commands.Cog):
+
+class UserInfo(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @commands.slash_command(
-        name='user',
+        name='user_info',
         description='Информация о пользователе',
         integration_types=Setting.integration_types,
         contexts=Setting.contexts,
         guild_ids=Setting.guilds_ids
     )
     @Setting.measure_execution_time()
-    async def user(
+    async def user_info(
         self,
         ctx: ApplicationContext,
-        user: discord.Option(discord.User, name="пользователь")
+        user: Option(User, name="пользователь")
     ):
         embed = Embed()
 
@@ -55,10 +56,10 @@ class User(commands.Cog):
             embed.set_image(url=fetched_user.banner.url)
 
         embed.set_thumbnail(url=avatar_url)
-        embed.color = discord.Color(DB.get_color(ctx))
+        embed.colour = DB.get_color(ctx)
 
         return [2, embed]
 
 
 def setup(bot):
-    bot.add_cog(User(bot))
+    bot.add_cog(UserInfo(bot))
