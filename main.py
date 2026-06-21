@@ -3,8 +3,12 @@ import os
 from discord import Bot, Intents
 from dotenv import load_dotenv
 
+from settings import DB
+
 
 def main():
+    DB()
+
     bot = Bot(intents=Intents.default())
 
     for folderName in os.listdir('./Cogs'):
