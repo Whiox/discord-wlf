@@ -1,18 +1,59 @@
+
 import time
-import json
 import random
-import discord
-import asyncio
-from discord import Embed
+
 from functools import wraps
 from database import Database
-from discord import IntegrationType
-from discord import ApplicationContext
-from discord import InteractionContextType
+from discord import IntegrationType, ApplicationContext, InteractionContextType
+
+
+class DB:
+    db = None
+
+    def __init__(self):
+        DB.db = Database()
+
+    @staticmethod
+    def check_user(ctx: ApplicationContext):
+        if not DB.db.check_user(ctx.user.id):
+            DB.db.add_user(ctx)
+
+    @staticmethod
+    def get_color(ctx: ApplicationContext):
+        DB.check_user(ctx)
+        color = DB.db.get_color(ctx.user.id)
+        if color == '1':
+            color = f"#{random.randint(0, 0xFFFFFF):06X}"[1:]
+        return int(color, 16)
+
+    @staticmethod
+    def get_private(ctx: ApplicationContext):
+        DB.check_user(ctx)
+        return DB.db.get_private(ctx.user.id)
+
+    @staticmethod
+    def set_private(ctx: ApplicationContext, private):
+        DB.check_user(ctx)
+        DB.db.set_private(ctx.user.id, private)
+
+    @staticmethod
+    def set_color(ctx: ApplicationContext, color):
+        DB.check_user(ctx)
+        DB.db.set_color(ctx.user.id, color)
+
+    @staticmethod
+    def get_first_command(ctx):
+        DB.check_user(ctx)
+        return DB.db.get_first_command(ctx.user.id)
+
+    @staticmethod
+    def get_db_ping(ctx: ApplicationContext):
+        DB.check_user(ctx)
+        return DB.db.get_ping(ctx.user.id)
+
+
 
 class Setting:
-    db = Database()
-
     integration_types = [
         IntegrationType.user_install,
         IntegrationType.guild_install,
@@ -25,44 +66,6 @@ class Setting:
     ]
 
     guilds_ids = None
-
-    @staticmethod
-    def check_user(ctx: ApplicationContext):
-        if Setting.db.check_user(ctx.user.id): pass
-        else: Setting.db.add_user(ctx)
-
-    @staticmethod
-    def get_color(ctx: ApplicationContext):
-        Setting.check_user(ctx)
-        color = Setting.db.get_color(ctx.user.id)
-        if color == '1':
-            color = f"#{random.randint(0, 0xFFFFFF):06X}"[1:]
-        return int(color, 16)
-
-    @staticmethod
-    def get_private(ctx: ApplicationContext):
-        Setting.check_user(ctx)
-        return Setting.db.get_private(ctx.user.id)
-
-    @staticmethod
-    def set_private(ctx: ApplicationContext, private):
-        Setting.check_user(ctx)
-        Setting.db.set_private(ctx.user.id, private)
-
-    @staticmethod
-    def set_color(ctx: ApplicationContext, color):
-        Setting.check_user(ctx)
-        Setting.db.set_color(ctx.user.id, color)
-
-    @staticmethod
-    def get_first_command(ctx):
-        Setting.check_user(ctx)
-        return Setting.db.get_first_command(ctx.user.id)
-
-    @staticmethod
-    def get_db_ping(ctx: ApplicationContext):
-        Setting.check_user(ctx)
-        return Setting.db.get_ping(ctx.user.id)
 
     @staticmethod
     def get_current_time():
@@ -78,7 +81,7 @@ class Setting:
             @wraps(func)
             async def wrapper(self, ctx, *args, **kwargs):
                 try:
-                    private = Setting.get_private(ctx)
+                    private = DB.get_private(ctx)
                     if func.__name__ == 'mode': private = True
 
                     if not ctx.response.is_done(): await ctx.defer(ephemeral=private)

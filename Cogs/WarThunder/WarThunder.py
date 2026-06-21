@@ -1,5 +1,5 @@
 
-from settings import Setting
+from settings import Setting, DB
 from discord import ApplicationContext, Embed, Option, SlashCommandGroup
 from discord.ext import commands
 
@@ -31,7 +31,7 @@ class WarThunder(commands.Cog):
         vehicle_type: str = Option(str, "Выберите тип игры", name="type", choices=["Air", "Ground"], default="Ground"),
         period: str = Option(str, "За какой период", choices=["Month", "All"], default="All"),
     ):
-        embed = Embed(color=Setting.get_color(ctx))
+        embed = Embed(color=DB.get_color(ctx))
 
         user = user_search(username)
 
@@ -124,7 +124,7 @@ class WarThunder(commands.Cog):
     ):
         data = squadron_search(name)
 
-        embed = Embed(color=Setting.get_color(ctx))
+        embed = Embed(color=DB.get_color(ctx))
 
         if data:
             embed.title = f"{data['name']}   {data['tag']}"

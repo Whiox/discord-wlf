@@ -1,4 +1,4 @@
-from settings import Setting
+from settings import Setting, DB
 from discord import ApplicationContext, Embed, SelectOption
 from discord.ext import commands
 from discord.ui import select, View
@@ -25,7 +25,7 @@ class Help(commands.Cog):
         embed.add_field(name="Basic", value=Help.help_command["Basic"], inline=False)
         embed.add_field(name="Converter", value=Help.help_command["Converter"], inline=False)
         embed.add_field(name="War Thunder", value=Help.help_command["War Thunder"], inline=False)
-        embed.color = Setting.get_color(ctx)
+        embed.color = DB.get_color(ctx)
         return [8, embed, Help.get_view()]
 
     options = [
@@ -84,7 +84,7 @@ class Help(commands.Cog):
                 embed = Embed(
                     title=select.values[0],
                     description=Help.help_data[select.values[0]],
-                    color=Setting.get_color(interaction))
+                    color=DB.get_color(interaction))
                 return [embed]
 
         return MyView()

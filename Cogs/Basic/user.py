@@ -1,5 +1,5 @@
 import discord
-from settings import Setting
+from settings import Setting, DB
 from discord import ApplicationContext, Embed
 from discord.ext import commands
 
@@ -42,7 +42,7 @@ class User(commands.Cog):
 
         embed.add_field(
             name="Дата первого использования бота",
-            value=f"Первое использование: <t:{int(Setting.get_first_command(ctx))}:F>",
+            value=f"Первое использование: <t:{int(DB.get_first_command(ctx))}:F>",
             inline=False
         )
 
@@ -55,7 +55,7 @@ class User(commands.Cog):
             embed.set_image(url=fetched_user.banner.url)
 
         embed.set_thumbnail(url=avatar_url)
-        embed.color = discord.Color(Setting.get_color(ctx))
+        embed.color = discord.Color(DB.get_color(ctx))
 
         return [2, embed]
 

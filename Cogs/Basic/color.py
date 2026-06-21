@@ -1,4 +1,4 @@
-from settings import Setting
+from settings import Setting, DB
 from discord import ApplicationContext, Embed, Option
 from discord.ext import commands
 
@@ -75,7 +75,7 @@ class Color(commands.Cog):
             # Меняем цвет
             embed.description = f"Текущий цвет - {color}"
             embed.colour = int(color, 16)
-            Setting.set_color(ctx, color)
+            DB.set_color(ctx, color)
 
         except ValueError:
             embed.title = "Ваш цвет не был изменён"
@@ -83,7 +83,7 @@ class Color(commands.Cog):
             embed.add_field(name="Ошибка", value=f"Введённый вами цвет не существует - "
                                                  f"{color if color else custom_color}", inline=False)
             embed.add_field(name="Используйте конвертер", value="Используйте любой rgb to hex конвертер", inline=False)
-            embed.colour = Setting.get_color(ctx)
+            embed.colour = DB.get_color(ctx)
         return [2, embed]
 
 

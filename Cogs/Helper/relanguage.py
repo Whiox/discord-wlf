@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from discord import ApplicationContext
 
-from settings import Setting
+from settings import Setting, DB
 
 
 class ReLanguage(commands.Cog):
@@ -36,11 +36,11 @@ class ReLanguage(commands.Cog):
             ctx: ApplicationContext,
             text: str,
     ):
-        private = Setting.get_private(ctx)
+        private = DB.get_private(ctx)
         if not ctx.response.is_done():
             await ctx.defer(ephemeral=private)
         embed = discord.Embed()
-        embed.color = discord.Color(Setting.get_color(ctx))
+        embed.color = discord.Color(DB.get_color(ctx))
 
         if any('а' <= ch <= 'я' or 'А' <= ch <= 'Я' or ch in "ёЁ" for ch in text):
             result = self.convert(text, self.RU_TO_EN)
@@ -59,11 +59,11 @@ class ReLanguage(commands.Cog):
         contexts=Setting.contexts
     )
     async def rel(self, ctx: discord.ApplicationContext, message: discord.Message):
-        private = Setting.get_private(ctx)
+        private = DB.get_private(ctx)
         if not ctx.response.is_done():
             await ctx.defer(ephemeral=private)
         embed = discord.Embed()
-        embed.color = discord.Color(Setting.get_color(ctx))
+        embed.color = discord.Color(DB.get_color(ctx))
 
         text = message.content
 

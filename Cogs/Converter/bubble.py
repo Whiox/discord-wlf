@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from discord import ApplicationContext, Embed
-from settings import Setting
+from settings import Setting, DB
 from PIL import Image, ImageDraw, ImageChops
 from io import BytesIO
 
@@ -24,12 +24,12 @@ class Bubble(commands.Cog):
             height: discord.Option(int, description="Высота в процентах (целое число от 0 до 100)",
                                    default=20)
     ):
-        private = Setting.get_private(ctx)
+        private = DB.get_private(ctx)
         if not ctx.response.is_done():
             await ctx.defer(ephemeral=private)
 
         embed = Embed(title="GIF")
-        embed.color = discord.Color(Setting.get_color(ctx))
+        embed.color = discord.Color(DB.get_color(ctx))
 
         valid_formats = ['png', 'jpeg', 'jpg', 'webp', 'gif']
         file_format = file.filename.lower().split('.')[-1]
@@ -37,7 +37,7 @@ class Bubble(commands.Cog):
             embed = discord.Embed(
                 title="Ошибка",
                 description="Неверный формат файла. Допустимые форматы: png, jpeg, webp, gif.",
-                color=Setting.get_color(ctx)
+                color=DB.get_color(ctx)
             )
             return [2, embed]
 
@@ -54,7 +54,7 @@ class Bubble(commands.Cog):
             embed = discord.Embed(
                 title="Ошибка",
                 description="Произошла ошибка при обработке изображения.",
-                color=Setting.get_color(ctx)
+                color=DB.get_color(ctx)
             )
             return [2, embed]
 
@@ -68,12 +68,12 @@ class Bubble(commands.Cog):
             ctx: ApplicationContext,
             message: discord.Message,
     ):
-        private = Setting.get_private(ctx)
+        private = DB.get_private(ctx)
         if not ctx.response.is_done():
             await ctx.defer(ephemeral=private)
 
         embed = Embed(title="GIF")
-        embed.color = discord.Color(Setting.get_color(ctx))
+        embed.color = discord.Color(DB.get_color(ctx))
 
         if not message.attachments:
             embed.description = "В этом сообщении нет вложений."
@@ -86,7 +86,7 @@ class Bubble(commands.Cog):
             embed = discord.Embed(
                 title="Ошибка",
                 description="Неверный формат файла. Допустимые форматы: png, jpeg, webp, gif.",
-                color=Setting.get_color(ctx)
+                color=DB.get_color(ctx)
             )
             return [2, embed]
 
@@ -97,7 +97,7 @@ class Bubble(commands.Cog):
             discord_file = discord.File(fp=result, filename=f"{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
             embed = discord.Embed(
                 title="Обработанное изображение",
-                color=Setting.get_color(ctx)
+                color=DB.get_color(ctx)
             )
             embed.set_image(url=f"attachment://{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
             return [4, embed, discord_file]
@@ -107,7 +107,7 @@ class Bubble(commands.Cog):
             embed = discord.Embed(
                 title="Ошибка",
                 description="Произошла ошибка при обработке изображения.",
-                color=Setting.get_color(ctx)
+                color=DB.get_color(ctx)
             )
             return [2, embed]
 
