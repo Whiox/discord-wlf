@@ -78,7 +78,7 @@ class BubbleAI(commands.Cog):
             await ctx.defer(ephemeral=private)
 
         embed = Embed(title="GIF")
-        embed.colour = Color(DB.get_color(ctx))
+        embed.colour = DB.get_color(ctx)
 
         if not message.attachments:
             embed.description = "В этом сообщении нет вложений."

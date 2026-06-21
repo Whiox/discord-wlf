@@ -1,5 +1,5 @@
 
-from discord import ApplicationContext, Embed, Attachment, Option, File, Message
+from discord import ApplicationContext, Embed, Message
 from discord.ext import commands
 
 from settings import Setting, DB
