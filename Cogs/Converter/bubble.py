@@ -5,7 +5,7 @@ from discord.ext import commands
 from io import BytesIO
 from PIL import Image, ImageDraw, ImageChops
 
-from settings import Setting, DB, CommandResponse, measure_execution_time
+from settings import Setting, DB, CommandResponse, process_command
 
 
 class Bubble(commands.Cog):
@@ -18,7 +18,7 @@ class Bubble(commands.Cog):
         integration_types=Setting.integration_types,
         contexts=Setting.contexts
     )
-    @measure_execution_time()
+    @process_command()
     async def bubble(
             self,
             ctx: ApplicationContext,
@@ -73,7 +73,7 @@ class Bubble(commands.Cog):
         name="Добавить пузырь на изображение",
         integration_types=Setting.integration_types,
         contexts=Setting.contexts)
-    @measure_execution_time()
+    @process_command()
     async def bubble_menu(
             self,
             ctx: ApplicationContext,

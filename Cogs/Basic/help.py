@@ -3,7 +3,7 @@ from discord import ApplicationContext, Embed, SelectOption
 from discord.ui import select, View
 from discord.ext import commands
 
-from settings import Setting, DB, CommandResponse, measure_execution_time, view_measure_execution_time
+from settings import Setting, DB, CommandResponse, process_command, process_view
 
 
 class Help(commands.Cog):
@@ -17,7 +17,7 @@ class Help(commands.Cog):
         contexts=Setting.contexts,
         guild_ids=Setting.guilds_ids
     )
-    @measure_execution_time()
+    @process_command()
     async def user(
         self,
         ctx: ApplicationContext
@@ -85,7 +85,7 @@ class Help(commands.Cog):
                 super().__init__(timeout=None)
 
             @select(placeholder="Выберите нужный раздел", custom_id="select-help", options=Help.options)
-            @view_measure_execution_time()
+            @process_view()
             async def select_callback(self, select, interaction):
                 embed = Embed(
                     title=select.values[0],

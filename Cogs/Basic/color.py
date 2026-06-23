@@ -2,7 +2,7 @@
 from discord import ApplicationContext, Embed, Option
 from discord.ext import commands
 
-from settings import Setting, DB, CommandResponse, measure_execution_time
+from settings import Setting, DB, CommandResponse, process_command
 
 
 default_colors = {
@@ -44,7 +44,7 @@ class Color(commands.Cog):
         contexts=Setting.contexts,
         guild_ids=Setting.guilds_ids
     )
-    @measure_execution_time()
+    @process_command()
     async def color(
         self,
         ctx: ApplicationContext,

@@ -5,7 +5,7 @@ from discord.ext import commands
 from io import BytesIO
 from target_cloud_detect import Model
 
-from settings import Setting, DB, CommandResponse, measure_execution_time
+from settings import Setting, DB, CommandResponse, process_command
 
 
 class BubbleAI(commands.Cog):
@@ -19,7 +19,7 @@ class BubbleAI(commands.Cog):
         integration_types=Setting.integration_types,
         contexts=Setting.contexts
     )
-    @measure_execution_time()
+    @process_command()
     async def bubble_ai(
             self,
             ctx: ApplicationContext,
@@ -77,7 +77,7 @@ class BubbleAI(commands.Cog):
         name="Добавить пузырь AI™",
         integration_types=Setting.integration_types,
         contexts=Setting.contexts)
-    @measure_execution_time()
+    @process_command()
     async def bubble_ai_menu(
             self,
             ctx: ApplicationContext,

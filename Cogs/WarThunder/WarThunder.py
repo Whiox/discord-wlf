@@ -4,7 +4,7 @@ from discord.ext import commands
 
 from thunderget import get_user_data, user_search, squadron_search
 
-from settings import Setting, DB, CommandResponse, measure_execution_time
+from settings import Setting, DB, CommandResponse, process_command
 
 
 class WarThunder(commands.Cog):
@@ -23,7 +23,7 @@ class WarThunder(commands.Cog):
         name='stats',
         description='Статистика игрока по нику'
     )
-    @measure_execution_time()
+    @process_command()
     async def stats(
         self,
         ctx: ApplicationContext,
@@ -121,7 +121,7 @@ class WarThunder(commands.Cog):
         name='squadron',
         description='Поиск полка по названию'
     )
-    @measure_execution_time()
+    @process_command()
     async def squadron(
         self,
         ctx: ApplicationContext,

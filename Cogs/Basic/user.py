@@ -2,7 +2,7 @@
 from discord import ApplicationContext, Embed, Option, User
 from discord.ext import commands
 
-from settings import Setting, DB, CommandResponse, measure_execution_time
+from settings import Setting, DB, CommandResponse, process_command
 
 
 class UserInfo(commands.Cog):
@@ -16,7 +16,7 @@ class UserInfo(commands.Cog):
         contexts=Setting.contexts,
         guild_ids=Setting.guilds_ids
     )
-    @measure_execution_time()
+    @process_command()
     async def user_info(
         self,
         ctx: ApplicationContext,

@@ -5,7 +5,7 @@ from discord.ext import commands
 from PIL import Image
 from io import BytesIO
 
-from settings import Setting, DB, CommandResponse, measure_execution_time
+from settings import Setting, DB, CommandResponse, process_command
 
 
 class Gif(commands.Cog):
@@ -18,7 +18,7 @@ class Gif(commands.Cog):
         integration_types=Setting.integration_types,
         contexts=Setting.contexts
     )
-    @measure_execution_time()
+    @process_command()
     async def gif(
             self,
             ctx: ApplicationContext,
@@ -65,7 +65,7 @@ class Gif(commands.Cog):
         integration_types=Setting.integration_types,
         contexts=Setting.contexts
     )
-    @measure_execution_time()
+    @process_command()
     async def convert_to_gif(self, ctx: ApplicationContext, message: Message):
         private = DB.get_private(ctx)
         if not ctx.response.is_done():

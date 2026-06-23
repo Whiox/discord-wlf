@@ -2,7 +2,7 @@
 from discord import ApplicationContext, Embed, Message
 from discord.ext import commands
 
-from settings import Setting, DB, CommandResponse, measure_execution_time
+from settings import Setting, DB, CommandResponse, process_command
 
 
 class ReLanguage(commands.Cog):
@@ -30,7 +30,7 @@ class ReLanguage(commands.Cog):
         integration_types=Setting.integration_types,
         contexts=Setting.contexts
     )
-    @measure_execution_time()
+    @process_command()
     async def relanguage(
             self,
             ctx: ApplicationContext,

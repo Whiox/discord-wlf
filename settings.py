@@ -83,7 +83,7 @@ class CommandResponse:
         }
 
 
-def measure_execution_time():
+def process_command():
     def decorator(func):
         @wraps(func)
         async def wrapper(self, ctx, *args, **kwargs):
@@ -106,7 +106,7 @@ def measure_execution_time():
     return decorator
 
 
-def view_measure_execution_time():
+def process_view():
     def decorator(func):
         @wraps(func)
         async def wrapper(self, select, interaction, *args, **kwargs):
