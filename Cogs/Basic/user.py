@@ -2,7 +2,7 @@
 from discord import ApplicationContext, Embed, Option, User
 from discord.ext import commands
 
-from settings import Setting, DB
+from settings import Setting, DB, CommandResponse, measure_execution_time
 
 
 class UserInfo(commands.Cog):
@@ -16,7 +16,7 @@ class UserInfo(commands.Cog):
         contexts=Setting.contexts,
         guild_ids=Setting.guilds_ids
     )
-    @Setting.measure_execution_time()
+    @measure_execution_time()
     async def user_info(
         self,
         ctx: ApplicationContext,
@@ -58,7 +58,9 @@ class UserInfo(commands.Cog):
         embed.set_thumbnail(url=avatar_url)
         embed.colour = DB.get_color(ctx)
 
-        return [2, embed]
+        return CommandResponse(
+            embed=embed,
+        )
 
 
 def setup(bot):

@@ -4,7 +4,8 @@ import random
 
 from functools import wraps
 from database import Database
-from discord import IntegrationType, ApplicationContext, InteractionContextType
+from discord import IntegrationType, ApplicationContext, InteractionContextType, Embed, File
+from discord.ui import View
 
 
 class DB:
@@ -52,6 +53,75 @@ class DB:
         return DB.db.get_ping(ctx.user.id)
 
 
+class CommandResponse:
+    def __init__(
+            self,
+            embed: Embed|None = None,
+            file: File|None = None,
+            view: View|None = None,
+    ):
+        self.embed = embed
+        self.file = file
+        self.view = view
+
+    def set_delta_time(self, start_time):
+        if self.embed:
+            self.embed.set_footer(
+                text=f"Время на выполнение: {round(time.time() - start_time, 2)}"
+            )
+
+    def process_response(self):
+        return {
+            name: value
+            for name, value in
+            {
+                "embed": self.embed,
+                "file": self.file,
+                "view": self.view,
+            }.items()
+            if value is not None
+        }
+
+
+def measure_execution_time():
+    def decorator(func):
+        @wraps(func)
+        async def wrapper(self, ctx, *args, **kwargs):
+            try:
+                private = DB.get_private(ctx)
+
+                if not ctx.response.is_done(): await ctx.defer(ephemeral=private)
+
+                start_time = time.time()
+                response: CommandResponse = await func(self, ctx, *args, **kwargs)
+                response.set_delta_time(start_time)
+
+                await ctx.respond(**response.process_response(), ephemeral=private)
+
+            except Exception as e:
+                print(f"Ошибка в команде {func.__name__}: {e}")
+                if not ctx.response.is_done():
+                    await ctx.respond("Произошла ошибка при выполнении команды.", ephemeral=True)
+        return wrapper
+    return decorator
+
+
+def view_measure_execution_time():
+    def decorator(func):
+        @wraps(func)
+        async def wrapper(self, select, interaction, *args, **kwargs):
+            try:
+                start_time = time.time()
+                response: CommandResponse = await func(self, select, interaction, *args, **kwargs)
+                response.set_delta_time(start_time)
+                await interaction.edit(**response.process_response())
+            except Exception as e:
+                print(f"Ошибка в команде {func.__name__}: {e}")
+                if not interaction.response.is_done():
+                    await interaction.respond("Произошла ошибка при выполнении команды.", ephemeral=True)
+        return wrapper
+    return decorator
+
 
 class Setting:
     integration_types = [
@@ -66,66 +136,3 @@ class Setting:
     ]
 
     guilds_ids = None
-
-    @staticmethod
-    def get_current_time():
-        return time.time()
-
-    @staticmethod
-    def get_delta_time(old_time: float):
-        return round(time.time() - old_time, 2)
-
-    @staticmethod
-    def measure_execution_time():
-        def decorator(func):
-            @wraps(func)
-            async def wrapper(self, ctx, *args, **kwargs):
-                try:
-                    private = DB.get_private(ctx)
-                    if func.__name__ == 'mode': private = True
-
-                    if not ctx.response.is_done(): await ctx.defer(ephemeral=private)
-
-                    start_time = Setting.get_current_time()
-                    response = await func(self, ctx, *args, **kwargs)
-                    embed = response[1]
-                    embed.set_footer(
-                        text=f"Время на выполнение: {Setting.get_delta_time(start_time)}с"
-                    )
-
-                    code = response[0]
-                    if code == 2:
-                        await ctx.respond(embed=embed, ephemeral=private)
-                    elif code == 4:
-                        file = response[2]
-                        await ctx.respond(embed=embed, file=file, ephemeral=private)
-                    elif code == 8:
-                        view = response[2]
-                        await ctx.respond(embed=embed, view=view, ephemeral=private)
-
-                except Exception as e:
-                    print(f"Ошибка в команде {func.__name__}: {e}")
-                    if not ctx.response.is_done():
-                        await ctx.respond("Произошла ошибка при выполнении команды.", ephemeral=True)
-            return wrapper
-        return decorator
-
-    @staticmethod
-    def view_measure_execution_time():
-        def decorator(func):
-            @wraps(func)
-            async def wrapper(self, select, interaction, *args, **kwargs):
-                try:
-                    start_time = Setting.get_current_time()
-                    response = await func(self, select, interaction, *args, **kwargs)
-                    embed = response[0]
-                    embed.set_footer(
-                        text=f"Время на выполнение: {Setting.get_delta_time(start_time)}с"
-                    )
-                    await interaction.edit(embed=embed)
-                except Exception as e:
-                    print(f"Ошибка в команде {func.__name__}: {e}")
-                    if not interaction.response.is_done():
-                        await interaction.respond("Произошла ошибка при выполнении команды.", ephemeral=True)
-            return wrapper
-        return decorator

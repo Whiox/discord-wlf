@@ -5,7 +5,7 @@ from discord.ext import commands
 from io import BytesIO
 from PIL import Image, ImageDraw, ImageChops
 
-from settings import Setting, DB
+from settings import Setting, DB, CommandResponse, measure_execution_time
 
 
 class Bubble(commands.Cog):
@@ -18,7 +18,7 @@ class Bubble(commands.Cog):
         integration_types=Setting.integration_types,
         contexts=Setting.contexts
     )
-    @Setting.measure_execution_time()
+    @measure_execution_time()
     async def bubble(
             self,
             ctx: ApplicationContext,
@@ -40,7 +40,10 @@ class Bubble(commands.Cog):
                 description="Неверный формат файла. Допустимые форматы: png, jpeg, webp, gif.",
                 color=DB.get_color(ctx)
             )
-            return [2, embed]
+
+            return CommandResponse(
+                embed=embed,
+            )
 
         try:
             file_bytes = await file.read()
@@ -48,7 +51,11 @@ class Bubble(commands.Cog):
 
             discord_file = File(fp=result, filename=f"{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
             embed.set_image(url=f"attachment://{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
-            return [4, embed, discord_file]
+
+            return CommandResponse(
+                embed=embed,
+                file=discord_file,
+            )
 
         except Exception as e:
             print(f"Ошибка обработки изображения: {e}")
@@ -57,13 +64,16 @@ class Bubble(commands.Cog):
                 description="Произошла ошибка при обработке изображения.",
                 color=DB.get_color(ctx)
             )
-            return [2, embed]
+
+            return CommandResponse(
+                embed=embed,
+            )
 
     @commands.message_command(
         name="Добавить пузырь на изображение",
         integration_types=Setting.integration_types,
         contexts=Setting.contexts)
-    @Setting.measure_execution_time()
+    @measure_execution_time()
     async def bubble_menu(
             self,
             ctx: ApplicationContext,
@@ -78,7 +88,10 @@ class Bubble(commands.Cog):
 
         if not message.attachments:
             embed.description = "В этом сообщении нет вложений."
-            return [2, embed]
+
+            return CommandResponse(
+                embed=embed,
+            )
 
         valid_formats = ['png', 'jpeg', 'jpg', 'webp', 'gif']
         file = message.attachments[0]
@@ -89,7 +102,10 @@ class Bubble(commands.Cog):
                 description="Неверный формат файла. Допустимые форматы: png, jpeg, webp, gif.",
                 color=DB.get_color(ctx)
             )
-            return [2, embed]
+
+            return CommandResponse(
+                embed=embed,
+            )
 
         try:
             file_bytes = await file.read()
@@ -110,7 +126,10 @@ class Bubble(commands.Cog):
                 description="Произошла ошибка при обработке изображения.",
                 color=DB.get_color(ctx)
             )
-            return [2, embed]
+
+            return CommandResponse(
+                embed=embed,
+            )
 
     @staticmethod
     def add_bubble(file_bytes, height = 20):

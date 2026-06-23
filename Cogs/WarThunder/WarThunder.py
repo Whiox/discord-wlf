@@ -4,7 +4,7 @@ from discord.ext import commands
 
 from thunderget import get_user_data, user_search, squadron_search
 
-from settings import Setting, DB
+from settings import Setting, DB, CommandResponse, measure_execution_time
 
 
 class WarThunder(commands.Cog):
@@ -23,7 +23,7 @@ class WarThunder(commands.Cog):
         name='stats',
         description='Статистика игрока по нику'
     )
-    @Setting.measure_execution_time()
+    @measure_execution_time()
     async def stats(
         self,
         ctx: ApplicationContext,
@@ -39,7 +39,9 @@ class WarThunder(commands.Cog):
         if user['id'] == 0:
             embed.title = f"Не удалось найти игрока {username}"
 
-            return [2, embed]
+            return CommandResponse(
+                embed=embed,
+            )
 
         period = 'current' if period == 'All' else 'month'
 
@@ -110,14 +112,16 @@ class WarThunder(commands.Cog):
         else:
             embed.description = f"Статистика в {mode} для {vehicle_type} не найдена"
 
-        return [2, embed]
+        return CommandResponse(
+            embed=embed,
+        )
 
 
     @warthunder_group.command(
         name='squadron',
         description='Поиск полка по названию'
     )
-    @Setting.measure_execution_time()
+    @measure_execution_time()
     async def squadron(
         self,
         ctx: ApplicationContext,
@@ -134,7 +138,9 @@ class WarThunder(commands.Cog):
             embed.add_field(name='status', value=data['status'], inline=True)
             embed.add_field(name='members', value=data['member_count'], inline=True)
 
-        return [2, embed]
+        return CommandResponse(
+            embed=embed,
+        )
 
 
 def setup(bot):

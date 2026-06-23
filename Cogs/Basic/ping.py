@@ -2,7 +2,7 @@
 from discord import ApplicationContext, Embed
 from discord.ext import commands
 
-from settings import Setting, DB
+from settings import Setting, DB, CommandResponse, measure_execution_time
 
 
 class Ping(commands.Cog):
@@ -16,7 +16,7 @@ class Ping(commands.Cog):
         contexts=Setting.contexts,
         guild_ids=Setting.guilds_ids
     )
-    @Setting.measure_execution_time()
+    @measure_execution_time()
     async def ping(
         self,
         ctx: ApplicationContext
@@ -29,7 +29,10 @@ class Ping(commands.Cog):
         embed.colour = DB.get_color(ctx)
         embed.add_field(name="Задержка до бота" ,value=f'{latency * 1000:.2f}мс/{latency:.2f}с', inline=False)
         embed.add_field(name="Задержка до базы", value=f'{ping_ms}мс/{ping_s:.2f}с', inline=False)
-        return [2, embed]
+
+        return CommandResponse(
+            embed=embed,
+        )
 
 
 def setup(bot):

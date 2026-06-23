@@ -5,7 +5,7 @@ from discord.ext import commands
 from io import BytesIO
 from target_cloud_detect import Model
 
-from settings import Setting, DB
+from settings import Setting, DB, CommandResponse, measure_execution_time
 
 
 class BubbleAI(commands.Cog):
@@ -19,7 +19,7 @@ class BubbleAI(commands.Cog):
         integration_types=Setting.integration_types,
         contexts=Setting.contexts
     )
-    @Setting.measure_execution_time()
+    @measure_execution_time()
     async def bubble_ai(
             self,
             ctx: ApplicationContext,
@@ -40,7 +40,10 @@ class BubbleAI(commands.Cog):
                 description="Неверный формат файла. Допустимые форматы: png, jpeg, webp, gif.",
                 color=DB.get_color(ctx)
             )
-            return [2, embed]
+
+            return CommandResponse(
+                embed=embed,
+            )
 
         try:
             file_bytes = await file.read()
@@ -52,7 +55,11 @@ class BubbleAI(commands.Cog):
 
             discord_file = File(fp=output, filename=f"{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
             embed.set_image(url=f"attachment://{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
-            return [4, embed, discord_file]
+
+            return CommandResponse(
+                embed=embed,
+                file=discord_file,
+            )
 
         except Exception as e:
             print(f"Ошибка обработки изображения: {e}")
@@ -61,13 +68,16 @@ class BubbleAI(commands.Cog):
                 description="Произошла ошибка при обработке изображения.",
                 color=DB.get_color(ctx)
             )
-            return [2, embed]
+
+            return CommandResponse(
+                embed=embed,
+            )
 
     @commands.message_command(
         name="Добавить пузырь AI™",
         integration_types=Setting.integration_types,
         contexts=Setting.contexts)
-    @Setting.measure_execution_time()
+    @measure_execution_time()
     async def bubble_ai_menu(
             self,
             ctx: ApplicationContext,
@@ -93,7 +103,10 @@ class BubbleAI(commands.Cog):
                 description="Неверный формат файла. Допустимые форматы: png, jpeg, webp, gif.",
                 color=DB.get_color(ctx)
             )
-            return [2, embed]
+
+            return CommandResponse(
+                embed=embed,
+            )
 
         try:
             file_bytes = await file.read()
@@ -109,7 +122,11 @@ class BubbleAI(commands.Cog):
                 color=DB.get_color(ctx)
             )
             embed.set_image(url=f"attachment://{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
-            return [4, embed, discord_file]
+
+            return CommandResponse(
+                embed=embed,
+                file=discord_file
+            )
 
         except Exception as e:
             print(f"Ошибка обработки изображения: {e}")
@@ -118,7 +135,10 @@ class BubbleAI(commands.Cog):
                 description="Произошла ошибка при обработке изображения.",
                 color=DB.get_color(ctx)
             )
-            return [2, embed]
+
+            return CommandResponse(
+                embed=embed,
+            )
 
 
 def setup(bot):

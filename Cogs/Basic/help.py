@@ -3,7 +3,7 @@ from discord import ApplicationContext, Embed, SelectOption
 from discord.ui import select, View
 from discord.ext import commands
 
-from settings import Setting, DB
+from settings import Setting, DB, CommandResponse, measure_execution_time, view_measure_execution_time
 
 
 class Help(commands.Cog):
@@ -17,7 +17,7 @@ class Help(commands.Cog):
         contexts=Setting.contexts,
         guild_ids=Setting.guilds_ids
     )
-    @Setting.measure_execution_time()
+    @measure_execution_time()
     async def user(
         self,
         ctx: ApplicationContext
@@ -27,8 +27,12 @@ class Help(commands.Cog):
         embed.add_field(name="Basic", value=Help.help_command["Basic"], inline=False)
         embed.add_field(name="Converter", value=Help.help_command["Converter"], inline=False)
         embed.add_field(name="War Thunder", value=Help.help_command["War Thunder"], inline=False)
-        embed.color = DB.get_color(ctx)
-        return [8, embed, Help.get_view()]
+        embed.colour = DB.get_color(ctx)
+
+        return CommandResponse(
+            embed=embed,
+            view=Help.get_view(),
+        )
 
     options = [
         SelectOption(
@@ -81,13 +85,16 @@ class Help(commands.Cog):
                 super().__init__(timeout=None)
 
             @select(placeholder="Выберите нужный раздел", custom_id="select-help", options=Help.options)
-            @Setting.view_measure_execution_time()
+            @view_measure_execution_time()
             async def select_callback(self, select, interaction):
                 embed = Embed(
                     title=select.values[0],
                     description=Help.help_data[select.values[0]],
                     color=DB.get_color(interaction))
-                return [embed]
+
+                return CommandResponse(
+                    embed=embed,
+                )
 
         return MyView()
 

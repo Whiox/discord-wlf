@@ -2,7 +2,7 @@
 from discord import ApplicationContext, Embed, Option
 from discord.ext import commands
 
-from settings import Setting, DB
+from settings import Setting, DB, CommandResponse, measure_execution_time
 
 
 class Mode(commands.Cog):
@@ -16,7 +16,7 @@ class Mode(commands.Cog):
         contexts=Setting.contexts,
         guild_ids=Setting.guilds_ids
     )
-    @Setting.measure_execution_time()
+    @measure_execution_time()
     async def mode(
         self,
         ctx: ApplicationContext,
@@ -27,7 +27,10 @@ class Mode(commands.Cog):
         private = (True if private == "Включить режим" else False)
         embed.description = "Сообщения видны только вам" if private else "Сообщения видны всем"
         DB.set_private(ctx, private)
-        return [2, embed]
+
+        return CommandResponse(
+            embed=embed,
+        )
 
 
 def setup(bot):

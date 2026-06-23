@@ -5,7 +5,7 @@ from discord.ext import commands
 from PIL import Image
 from io import BytesIO
 
-from settings import Setting, DB
+from settings import Setting, DB, CommandResponse, measure_execution_time
 
 
 class Gif(commands.Cog):
@@ -18,7 +18,7 @@ class Gif(commands.Cog):
         integration_types=Setting.integration_types,
         contexts=Setting.contexts
     )
-    @Setting.measure_execution_time()
+    @measure_execution_time()
     async def gif(
             self,
             ctx: ApplicationContext,
@@ -33,7 +33,10 @@ class Gif(commands.Cog):
         valid_formats = ['png', 'jpeg', 'jpg', 'webp']
         if not file.filename.lower().split('.')[-1] in valid_formats:
             embed.description = "Неверный формат файла. Допустимые форматы: png, jpeg, webp."
-            return [2, embed]
+
+            return CommandResponse(
+                embed=embed,
+            )
 
         try:
             file_bytes = await file.read()
@@ -46,7 +49,11 @@ class Gif(commands.Cog):
             discord_file = File(fp=result, filename=f"{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
             embed.description = "Конвертировано в GIF"
             embed.set_image(url=f"attachment://{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
-            return [4, embed, discord_file]
+
+            return CommandResponse(
+                embed=embed,
+                file=discord_file,
+            )
 
         except UnicodeDecodeError as e:
             print(f"Ошибка кодировки: {e}")
@@ -58,7 +65,7 @@ class Gif(commands.Cog):
         integration_types=Setting.integration_types,
         contexts=Setting.contexts
     )
-    @Setting.measure_execution_time()
+    @measure_execution_time()
     async def convert_to_gif(self, ctx: ApplicationContext, message: Message):
         private = DB.get_private(ctx)
         if not ctx.response.is_done():
@@ -69,14 +76,20 @@ class Gif(commands.Cog):
 
         if not message.attachments:
             embed.description = "В этом сообщении нет вложений."
-            return [2, embed]
+
+            return CommandResponse(
+                embed=embed,
+            )
 
         valid_formats = ['png', 'jpeg', 'jpg', 'webp']
         file = message.attachments[0]
         file_format = file.filename.lower().split('.')[-1]
         if file_format not in valid_formats:
             embed.description = "Неверный формат файла. Допустимые форматы: png, jpeg, webp."
-            return [2, embed]
+
+            return CommandResponse(
+                embed=embed,
+            )
 
         try:
             file_bytes = await file.read()
@@ -91,12 +104,19 @@ class Gif(commands.Cog):
 
             discord_file = File(fp=result, filename=f"{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
             embed.set_image(url=f"attachment://{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
-            return [4, embed, discord_file]
+
+            return CommandResponse(
+                embed=embed,
+                file=discord_file,
+            )
 
         except Exception as e:
             print(f"Ошибка при обработке файла: {e}")
             embed.description = "Произошла ошибка при обработке файла."
-            return [2, embed]
+
+            return CommandResponse(
+                embed=embed,
+            )
 
 def setup(bot):
     bot.add_cog(Gif(bot))

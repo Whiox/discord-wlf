@@ -5,7 +5,7 @@ from discord.ext import commands
 from io import BytesIO
 from PIL import Image
 
-from settings import Setting, DB
+from settings import Setting, DB, CommandResponse, measure_execution_time
 
 
 class Png(commands.Cog):
@@ -18,7 +18,7 @@ class Png(commands.Cog):
         integration_types=Setting.integration_types,
         contexts=Setting.contexts
     )
-    @Setting.measure_execution_time()
+    @measure_execution_time()
     async def png(
             self,
             ctx: ApplicationContext,
@@ -33,7 +33,10 @@ class Png(commands.Cog):
         valid_formats = ['jpeg', 'jpg', 'webp', 'gif']
         if not file.filename.lower().split('.')[-1] in valid_formats:
             embed.description = "Неверный формат файла. Допустимые форматы: jpeg, webp, gif."
-            return [2, embed]
+
+            return CommandResponse(
+                embed=embed,
+            )
 
         try:
             file_bytes = await file.read()
@@ -50,7 +53,11 @@ class Png(commands.Cog):
             discord_file = File(fp=result, filename=f"{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.png")
             embed.description = "Конвертировано в PNG"
             embed.set_image(url=f"attachment://{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.png")
-            return [4, embed, discord_file]
+
+            return CommandResponse(
+                embed=embed,
+                file=discord_file,
+            )
 
         except UnicodeDecodeError as e:
             print(f"Ошибка кодировки: {e}")
@@ -71,14 +78,20 @@ class Png(commands.Cog):
 
         if not message.attachments:
             embed.description = "В этом сообщении нет вложений."
-            return [2, embed]
+
+            return CommandResponse(
+                embed=embed,
+            )
 
         valid_formats = ['jpeg', 'jpg', 'webp', 'gif']
         file = message.attachments[0]
         file_format = file.filename.lower().split('.')[-1]
         if file_format not in valid_formats:
             embed.description = "Неверный формат файла. Допустимые форматы: jpeg, webp, gif."
-            return [2, embed]
+
+            return CommandResponse(
+                embed=embed,
+            )
 
         try:
             file_bytes = await file.read()
@@ -95,12 +108,19 @@ class Png(commands.Cog):
             discord_file = File(fp=result, filename=f"{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.png")
             embed.description = "Конвертировано в PNG"
             embed.set_image(url=f"attachment://{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.png")
-            return [4, embed, discord_file]
+
+            return CommandResponse(
+                embed=embed,
+                file=discord_file,
+            )
 
         except Exception as e:
             print(f"Ошибка при обработке файла: {e}")
             embed.description = "Произошла ошибка при обработке файла."
-            return [2, embed]
+
+            return CommandResponse(
+                embed=embed,
+            )
 
 
 def setup(bot):
