@@ -1,5 +1,6 @@
 import os
 import logging
+from pathlib import Path
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
@@ -12,7 +13,19 @@ from dotenv import load_dotenv
 from settings import DB
 
 
-def main():
+def setup_logging() -> None:
+    if not Path("logs").exists():
+        Path("logs").mkdir()
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        datefmt="%m/%d/%Y %I:%M:%S %p",
+        filename="logs/bot.log",
+    )
+
+
+def main() -> None:
+    setup_logging()
     DB()
 
     bot = Bot(intents=Intents.default())

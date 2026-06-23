@@ -2,10 +2,15 @@
 import time
 import random
 
+import logging
+
 from functools import wraps
 from database import Database
 from discord import IntegrationType, ApplicationContext, InteractionContextType, Embed, File
 from discord.ui import View
+
+
+logger = logging.getLogger(__name__)
 
 
 class DB:
@@ -99,7 +104,7 @@ def process_command():
                 await ctx.respond(**response.process_response(), ephemeral=private)
 
             except Exception as e:
-                print(f"Ошибка в команде {func.__name__}: {e}")
+                logger.warning(f"{func.__name__}: {e}")
                 if not ctx.response.is_done():
                     await ctx.respond("Произошла ошибка при выполнении команды.", ephemeral=True)
         return wrapper
@@ -116,7 +121,7 @@ def process_view():
                 response.set_delta_time(start_time)
                 await interaction.edit(**response.process_response())
             except Exception as e:
-                print(f"Ошибка в команде {func.__name__}: {e}")
+                logger.warning(f"{func.__name__}: {e}")
                 if not interaction.response.is_done():
                     await interaction.respond("Произошла ошибка при выполнении команды.", ephemeral=True)
         return wrapper
