@@ -64,7 +64,10 @@ class Color(commands.Cog):
             embed.title = "Ваш цвет не был изменён"
             embed.description = f"Ошибка вводимого значения"
             embed.add_field(name="Ошибка", value=f"Выберите один из двух вариантов ввода - {color}", inline=False)
-            return [2, embed]
+
+            return CommandResponse(
+                embed=embed,
+            )
 
         embed.description = f"Текущий цвет - {color}"
 
