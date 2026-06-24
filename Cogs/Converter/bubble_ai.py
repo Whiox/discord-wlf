@@ -92,7 +92,10 @@ class BubbleAI(commands.Cog):
 
         if not message.attachments:
             embed.description = "В этом сообщении нет вложений."
-            return [2, embed]
+
+            return CommandResponse(
+                embed=embed,
+            )
 
         valid_formats = ['png', 'jpeg', 'jpg', 'webp', 'gif']
         file = message.attachments[0]
