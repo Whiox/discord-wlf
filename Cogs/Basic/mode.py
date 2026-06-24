@@ -24,7 +24,7 @@ class Mode(commands.Cog):
     ):
         embed = Embed(title="Ваши настройки приватности были изменены")
         embed.colour = DB.get_color(ctx)
-        private = (True if private == "Включить режим" else False)
+        private = private == "Приватный"
         embed.description = "Сообщения видны только вам" if private else "Сообщения видны всем"
         DB.set_private(ctx, private)
 
