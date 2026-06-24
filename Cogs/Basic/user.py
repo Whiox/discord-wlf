@@ -10,7 +10,7 @@ class UserInfo(commands.Cog):
         self.bot = bot
 
     @commands.slash_command(
-        name='user_info',
+        name='user info',
         description='Информация о пользователе',
         integration_types=Setting.integration_types,
         contexts=Setting.contexts,

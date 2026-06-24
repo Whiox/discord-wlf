@@ -14,7 +14,7 @@ class BubbleAI(commands.Cog):
         self.model = Model()
 
     @commands.slash_command(
-        name='bubble_ai',
+        name='bubble ai',
         description='Добавить пузырь на изображение',
         integration_types=Setting.integration_types,
         contexts=Setting.contexts
