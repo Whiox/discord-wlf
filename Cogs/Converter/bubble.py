@@ -117,7 +117,11 @@ class Bubble(commands.Cog):
                 color=DB.get_color(ctx)
             )
             embed.set_image(url=f"attachment://{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
-            return [4, embed, discord_file]
+
+            return CommandResponse(
+                embed=embed,
+                file=discord_file,
+            )
 
         except Exception as e:
             print(f"Ошибка обработки изображения: {e}")
