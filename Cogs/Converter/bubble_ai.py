@@ -5,10 +5,11 @@ from discord.ext import commands
 from io import BytesIO
 from target_cloud_detect import Model
 
-from src.settings import Setting, DB, CommandResponse, process_command
+from src.settings import Setting, CommandResponse, process_command
+from src.file_converting import BaseConverter
 
 
-class BubbleAI(commands.Cog):
+class BubbleAI(commands.Cog, BaseConverter):
     def __init__(self, bot):
         self.bot = bot
         self.model = Model()
@@ -25,53 +26,29 @@ class BubbleAI(commands.Cog):
             ctx: ApplicationContext,
             file: Option(Attachment, description="Загрузите изображение (png, jeg, webp, gif)")
     ):
-        private = DB.get_private(ctx)
-        if not ctx.response.is_done():
-            await ctx.defer(ephemeral=private)
+        is_valid = self.check_file_format(file)  # CommandResponse | True
+        if is_valid is not True:
+            return is_valid
 
-        embed = Embed(title="GIF")
-        embed.colour = DB.get_color(ctx)
+        file_bytes = await file.read()
+        result = self.model.predict_from_bytes(file_bytes)
 
-        valid_formats = ['png', 'jpeg', 'jpg', 'webp', 'gif']
-        file_format = file.filename.lower().split('.')[-1]
-        if file_format not in valid_formats:
-            embed = Embed(
-                title="Ошибка",
-                description="Неверный формат файла. Допустимые форматы: png, jpeg, webp, gif.",
-                color=DB.get_color(ctx)
-            )
+        output = BytesIO()
+        result.save(output, format="PNG")
+        output.seek(0)
 
-            return CommandResponse(
-                embed=embed,
-            )
+        discord_file = File(fp=output, filename=f"{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
+        image_url = f"attachment://{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif"
+        embed = Embed(
+            title="bubble AI™ GIF",
+            image=image_url,
+        )
 
-        try:
-            file_bytes = await file.read()
-            result = self.model.predict_from_bytes(file_bytes)
+        return CommandResponse(
+            embed=embed,
+            file=discord_file,
+        )
 
-            output = BytesIO()
-            result.save(output, format="PNG")
-            output.seek(0)
-
-            discord_file = File(fp=output, filename=f"{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
-            embed.set_image(url=f"attachment://{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
-
-            return CommandResponse(
-                embed=embed,
-                file=discord_file,
-            )
-
-        except Exception as e:
-            print(f"Ошибка обработки изображения: {e}")
-            embed = Embed(
-                title="Ошибка",
-                description="Произошла ошибка при обработке изображения.",
-                color=DB.get_color(ctx)
-            )
-
-            return CommandResponse(
-                embed=embed,
-            )
 
     @commands.message_command(
         name="Добавить пузырь AI™",
@@ -83,65 +60,39 @@ class BubbleAI(commands.Cog):
             ctx: ApplicationContext,
             message: Message,
     ):
-        private = DB.get_private(ctx)
-        if not ctx.response.is_done():
-            await ctx.defer(ephemeral=private)
-
-        embed = Embed(title="GIF")
-        embed.colour = DB.get_color(ctx)
-
         if not message.attachments:
-            embed.description = "В этом сообщении нет вложений."
+            embed = Embed(
+                title="bubble AI™ GIF",
+                description="В этом сообщении нет вложений.",
+            )
 
             return CommandResponse(
                 embed=embed,
             )
 
-        valid_formats = ['png', 'jpeg', 'jpg', 'webp', 'gif']
         file = message.attachments[0]
-        file_format = file.filename.lower().split('.')[-1]
-        if file_format not in valid_formats:
-            embed = Embed(
-                title="Ошибка",
-                description="Неверный формат файла. Допустимые форматы: png, jpeg, webp, gif.",
-                color=DB.get_color(ctx)
-            )
+        is_valid = self.check_file_format(file)  # CommandResponse | True
+        if is_valid is not True:
+            return is_valid
 
-            return CommandResponse(
-                embed=embed,
-            )
+        file_bytes = await file.read()
+        result = self.model.predict_from_bytes(file_bytes)
 
-        try:
-            file_bytes = await file.read()
-            result = self.model.predict_from_bytes(file_bytes)
+        output = BytesIO()
+        result.save(output, format="PNG")
+        output.seek(0)
 
-            output = BytesIO()
-            result.save(output, format="PNG")
-            output.seek(0)
+        discord_file = File(fp=output, filename=f"{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
+        image_url = f"attachment://{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif"
+        embed = Embed(
+            title="bubble AI™ GIF",
+            image=image_url,
+        )
 
-            discord_file = File(fp=output, filename=f"{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
-            embed = Embed(
-                title="Обработанное изображение",
-                color=DB.get_color(ctx)
-            )
-            embed.set_image(url=f"attachment://{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
-
-            return CommandResponse(
-                embed=embed,
-                file=discord_file
-            )
-
-        except Exception as e:
-            print(f"Ошибка обработки изображения: {e}")
-            embed = Embed(
-                title="Ошибка",
-                description="Произошла ошибка при обработке изображения.",
-                color=DB.get_color(ctx)
-            )
-
-            return CommandResponse(
-                embed=embed,
-            )
+        return CommandResponse(
+            embed=embed,
+            file=discord_file,
+        )
 
 
 def setup(bot):

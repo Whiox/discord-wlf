@@ -6,9 +6,10 @@ from PIL import Image
 from io import BytesIO
 
 from src.settings import Setting, DB, CommandResponse, process_command
+from src.file_converting import BaseConverter
 
 
-class Gif(commands.Cog):
+class Gif(commands.Cog, BaseConverter):
     def __init__(self, bot):
         self.bot = bot
 
@@ -24,41 +25,28 @@ class Gif(commands.Cog):
             ctx: ApplicationContext,
             file: Option(Attachment, description="Выберите изображение для конвертации (png, jpeg, webp)")
     ):
-        private = DB.get_private(ctx)
-        if not ctx.response.is_done():
-            await ctx.defer(ephemeral=private)
-        embed = Embed(title="GIF")
-        embed.colour = DB.get_color(ctx)
+        is_valid = self.check_file_format(file)  # CommandResponse | True
+        if is_valid is not True:
+            return is_valid
 
-        valid_formats = ['png', 'jpeg', 'jpg', 'webp']
-        if not file.filename.lower().split('.')[-1] in valid_formats:
-            embed.description = "Неверный формат файла. Допустимые форматы: png, jpeg, webp."
+        file_bytes = await file.read()
+        with BytesIO(file_bytes) as byte_stream:
+            with Image.open(byte_stream) as image:
+                result = BytesIO()
+                image.save(result, format="GIF")
+                result.seek(0)
 
-            return CommandResponse(
-                embed=embed,
-            )
+        discord_file = File(fp=result, filename=f"{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
+        image_url = f"attachment://{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif"
+        embed = Embed(
+            title="GIF",
+            image=image_url,
+        )
 
-        try:
-            file_bytes = await file.read()
-            with BytesIO(file_bytes) as byte_stream:
-                with Image.open(byte_stream) as image:
-                    result = BytesIO()
-                    image.save(result, format="GIF")
-                    result.seek(0)
-
-            discord_file = File(fp=result, filename=f"{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
-            embed.description = "Конвертировано в GIF"
-            embed.set_image(url=f"attachment://{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
-
-            return CommandResponse(
-                embed=embed,
-                file=discord_file,
-            )
-
-        except UnicodeDecodeError as e:
-            print(f"Ошибка кодировки: {e}")
-        except Exception as e:
-            print(f"Произошла ошибка: {e}")
+        return CommandResponse(
+            embed=embed,
+            file=discord_file,
+        )
 
     @commands.message_command(
         name="Конвертация в GIF",
@@ -67,56 +55,39 @@ class Gif(commands.Cog):
     )
     @process_command()
     async def convert_to_gif(self, ctx: ApplicationContext, message: Message):
-        private = DB.get_private(ctx)
-        if not ctx.response.is_done():
-            await ctx.defer(ephemeral=private)
-
-        embed = Embed(title="GIF")
-        embed.colour = DB.get_color(ctx)
-
         if not message.attachments:
-            embed.description = "В этом сообщении нет вложений."
+            embed = Embed(
+                title="GIF",
+                description = "В этом сообщении нет вложений.",
+            )
 
             return CommandResponse(
                 embed=embed,
             )
 
-        valid_formats = ['png', 'jpeg', 'jpg', 'webp']
         file = message.attachments[0]
-        file_format = file.filename.lower().split('.')[-1]
-        if file_format not in valid_formats:
-            embed.description = "Неверный формат файла. Допустимые форматы: png, jpeg, webp."
+        is_valid = self.check_file_format(file)  # CommandResponse | True
+        if is_valid is not True:
+            return is_valid
 
-            return CommandResponse(
-                embed=embed,
-            )
+        file_bytes = await file.read()
+        with BytesIO(file_bytes) as byte_stream:
+            with Image.open(byte_stream) as image:
+                result = BytesIO()
+                image.save(result, format="GIF")
+                result.seek(0)
 
-        try:
-            file_bytes = await file.read()
-            with BytesIO(file_bytes) as byte_stream:
-                with Image.open(byte_stream) as image:
-                    if image.mode in ("RGBA", "LA"):
-                        image = image.convert("RGB")
+        discord_file = File(fp=result, filename=f"{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
+        image_url = f"attachment://{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif"
+        embed = Embed(
+            title="GIF",
+            image=image_url,
+        )
 
-                    result = BytesIO()
-                    image.save(result, format="GIF")
-                    result.seek(0)
-
-            discord_file = File(fp=result, filename=f"{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
-            embed.set_image(url=f"attachment://{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
-
-            return CommandResponse(
-                embed=embed,
-                file=discord_file,
-            )
-
-        except Exception as e:
-            print(f"Ошибка при обработке файла: {e}")
-            embed.description = "Произошла ошибка при обработке файла."
-
-            return CommandResponse(
-                embed=embed,
-            )
+        return CommandResponse(
+            embed=embed,
+            file=discord_file,
+        )
 
 def setup(bot):
     bot.add_cog(Gif(bot))

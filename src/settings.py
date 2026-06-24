@@ -98,6 +98,9 @@ def process_command():
                 response: CommandResponse = await func(self, ctx, *args, **kwargs)
                 response.set_delta_time(start_time)
 
+                if response.embed:
+                    response.embed.colour = DB.get_color(ctx)
+
                 await ctx.respond(**response.process_response(), ephemeral=private)
 
             except Exception as e:
