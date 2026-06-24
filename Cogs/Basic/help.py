@@ -5,6 +5,8 @@ from discord.ext import commands
 
 from settings import Setting, DB, CommandResponse, process_command, process_view
 
+from src.help_content import HELP_SECTIONS
+
 
 class Help(commands.Cog):
     def __init__(self, bot):
@@ -18,15 +20,16 @@ class Help(commands.Cog):
         guild_ids=Setting.guilds_ids
     )
     @process_command()
-    async def user(
+    async def help(
         self,
         ctx: ApplicationContext
-    ):
+    ) -> CommandResponse:
         embed = Embed()
         embed.title = 'Чтобы узнать подробности выберите нужный вам раздел'
-        embed.add_field(name="Basic", value=Help.help_command["Basic"], inline=False)
-        embed.add_field(name="Converter", value=Help.help_command["Converter"], inline=False)
-        embed.add_field(name="War Thunder", value=Help.help_command["War Thunder"], inline=False)
+
+        for section in HELP_SECTIONS.values():
+            embed.add_field(name=section.name, value=section.command_list(), inline=False)
+
         embed.colour = DB.get_color(ctx)
 
         return CommandResponse(
@@ -34,69 +37,43 @@ class Help(commands.Cog):
             view=Help.get_view(),
         )
 
-    options = [
-        SelectOption(
-            label="Basic",
-            description="Получить информацию о базовых функциях"
-        ),
-        SelectOption(
-            label="Converter",
-            description="Получить информацию о функциях с конвертацией"
-        ),
-        SelectOption(
-            label="War Thunder",
-            description="Получить информацию о возможностях функций с тундрой"
-        ),
-    ]
-
-    help_command = {
-        'Basic': '`help`, `user`, `ping`, `color`, `mode`',
-        'Converter': '`gif`, `png`, `reply`',
-        'War Thunder': '`squadron`, `stats`'
-    }
-
-    help_data = {
-        'Basic': '`help`\n'
-                 'Выводит сообщение с выпадающим списком команд\n\n'
-                 '`user`\n'
-                 'Выводит информацию о пользователе (аватарка, баннер, id, дата регистрации)\n\n'
-                 '`ping`\n'
-                 'Проверьте работоспособность бота и его связь с бд\n\n'
-                 '`color`\n'
-                 'Измените цвет ваших embed (выберите 1 заготовленный из списка или напиши свой hex-код)\n\n'
-                 '`mode`\n'
-                 'Измените свои настройки приватности (True - все сообщения видны только вам)',
-        'Converter': '`gif`\n'
-                     'Конвертирует png, jpeg, webp изображения в Gif-фаил\n\n'
-                     '`png`\n'
-                     'Конвертирует jpeg, webp, gif(первый кадр) изображения в png картинку\n\n'
-                     '`reply`\n'
-                     'Создать из png, jpeg, webp, gif изображений "reply" gif',
-        'War Thunder': '`squadron`\n'
-                       'Ищет полк по названию\n\n'
-                       '`stats`\n'
-                       'Выводит статистику игрока по нику'
-    }
 
     @staticmethod
-    def get_view():
-        class MyView(View):
+    def get_view() -> View:
+        options = [
+            SelectOption(
+                label=section.name,
+                value=section_id,
+                description=section.description,
+            )
+            for section_id, section in HELP_SECTIONS.items()
+        ]
+
+
+        class HelpView(View):
             def __init__(self):
                 super().__init__(timeout=None)
 
-            @select(placeholder="Выберите нужный раздел", custom_id="select-help", options=Help.options)
+            @select(
+                placeholder="Выберите нужный раздел",
+                custom_id="select-help",
+                options=options
+            )
             @process_view()
-            async def select_callback(self, select, interaction):
+            async def select_callback(self, select_menu, interaction) -> CommandResponse:
+                section_id = select_menu.values[0]
+                section = HELP_SECTIONS[section_id]
+
                 embed = Embed(
-                    title=select.values[0],
-                    description=Help.help_data[select.values[0]],
+                    title=section.name,
+                    description=section.full_description(),
                     color=DB.get_color(interaction))
 
                 return CommandResponse(
                     embed=embed,
                 )
 
-        return MyView()
+        return HelpView()
 
 
 def setup(bot):
