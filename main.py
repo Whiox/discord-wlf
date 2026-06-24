@@ -1,5 +1,8 @@
+
 import os
+
 import logging
+from logging.handlers import RotatingFileHandler
 from pathlib import Path
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
@@ -21,6 +24,7 @@ def setup_logging() -> None:
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         datefmt="%m/%d/%Y %I:%M:%S %p",
         filename="logs/bot.log",
+        handlers=[RotatingFileHandler("logs/bot.log", maxBytes=5 * 1024 * 1024, backupCount=3)]
     )
 
 
