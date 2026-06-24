@@ -4,7 +4,7 @@ from discord.ext import commands
 
 from src.thunderget import get_user_data, user_search, squadron_search
 
-from settings import Setting, DB, CommandResponse, process_command
+from src.settings import Setting, DB, CommandResponse, process_command
 
 
 class WarThunder(commands.Cog):

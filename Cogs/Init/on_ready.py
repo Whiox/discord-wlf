@@ -17,7 +17,6 @@ class OnReadyCog(commands.Cog):
     async def on_ready(self):
         self.bot.add_view(Help.get_view())  # Добавляем view
         logger.info(f'We have logged in as {self.bot.user}')
-        print(f'We have logged in as {self.bot.user}')
 
 def setup(bot):
     bot.add_cog(OnReadyCog(bot))

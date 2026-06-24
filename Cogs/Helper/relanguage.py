@@ -2,7 +2,7 @@
 from discord import ApplicationContext, Embed, Message
 from discord.ext import commands
 
-from settings import Setting, DB, CommandResponse, process_command
+from src.settings import Setting, DB, CommandResponse, process_command
 
 
 class ReLanguage(commands.Cog):

@@ -3,7 +3,7 @@ from discord import ApplicationContext, Embed, SelectOption
 from discord.ui import select, View
 from discord.ext import commands
 
-from settings import Setting, DB, CommandResponse, process_command, process_view
+from src.settings import Setting, DB, CommandResponse, process_command, process_view
 
 from src.help_content import HELP_SECTIONS
 

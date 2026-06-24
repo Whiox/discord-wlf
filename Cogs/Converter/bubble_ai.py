@@ -5,7 +5,7 @@ from discord.ext import commands
 from io import BytesIO
 from target_cloud_detect import Model
 
-from settings import Setting, DB, CommandResponse, process_command
+from src.settings import Setting, DB, CommandResponse, process_command
 
 
 class BubbleAI(commands.Cog):
@@ -14,7 +14,7 @@ class BubbleAI(commands.Cog):
         self.model = Model()
 
     @commands.slash_command(
-        name='bubble ai',
+        name='bubble_ai',
         description='Добавить пузырь на изображение',
         integration_types=Setting.integration_types,
         contexts=Setting.contexts

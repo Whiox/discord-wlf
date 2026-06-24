@@ -5,7 +5,7 @@ from discord.ext import commands
 from io import BytesIO
 from PIL import Image
 
-from settings import Setting, DB, CommandResponse, process_command
+from src.settings import Setting, DB, CommandResponse, process_command
 
 
 class Png(commands.Cog):

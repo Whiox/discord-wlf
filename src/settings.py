@@ -5,7 +5,7 @@ import random
 import logging
 
 from functools import wraps
-from database import Database
+from src.database import Database
 from discord import IntegrationType, ApplicationContext, InteractionContextType, Embed, File
 from discord.ui import View
 

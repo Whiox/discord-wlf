@@ -5,7 +5,7 @@ from discord.ext import commands
 from PIL import Image
 from io import BytesIO
 
-from settings import Setting, DB, CommandResponse, process_command
+from src.settings import Setting, DB, CommandResponse, process_command
 
 
 class Gif(commands.Cog):

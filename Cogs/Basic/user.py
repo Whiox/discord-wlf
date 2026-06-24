@@ -2,7 +2,7 @@
 from discord import ApplicationContext, Embed, Option, User
 from discord.ext import commands
 
-from settings import Setting, DB, CommandResponse, process_command
+from src.settings import Setting, DB, CommandResponse, process_command
 
 
 class UserInfo(commands.Cog):
@@ -10,7 +10,7 @@ class UserInfo(commands.Cog):
         self.bot = bot
 
     @commands.slash_command(
-        name='user info',
+        name='user_info',
         description='Информация о пользователе',
         integration_types=Setting.integration_types,
         contexts=Setting.contexts,
