@@ -4,6 +4,10 @@ import sqlite3
 from dotenv import load_dotenv
 from discord import ApplicationContext
 
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 
@@ -31,7 +35,7 @@ class Database:
             cursor.close()
             return result
         except Exception as error:
-            print(f"Ошибка выполнения запроса: {error}")
+            logger.exception(f"{error}")
             return None
 
     def get_ping(self, user_id):

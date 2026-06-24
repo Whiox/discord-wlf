@@ -101,7 +101,7 @@ def process_command():
                 await ctx.respond(**response.process_response(), ephemeral=private)
 
             except Exception as e:
-                logger.warning(f"{func.__name__}: {e}")
+                logger.exception(f"{func.__name__}: {e}")
                 if not ctx.response.is_done():
                     await ctx.respond("Произошла ошибка при выполнении команды.", ephemeral=True)
         return wrapper
@@ -118,7 +118,7 @@ def process_view():
                 response.set_delta_time(start_time)
                 await interaction.edit(**response.process_response())
             except Exception as e:
-                logger.warning(f"{func.__name__}: {e}")
+                logger.exception(f"{func.__name__}: {e}")
                 if not interaction.response.is_done():
                     await interaction.respond("Произошла ошибка при выполнении команды.", ephemeral=True)
         return wrapper
