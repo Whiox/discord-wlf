@@ -9,6 +9,8 @@ from database import Database
 from discord import IntegrationType, ApplicationContext, InteractionContextType, Embed, File
 from discord.ui import View
 
+from dataclasses import dataclass
+
 
 logger = logging.getLogger(__name__)
 
@@ -58,16 +60,11 @@ class DB:
         return DB.db.get_ping(ctx.user.id)
 
 
+@dataclass(slots=True)
 class CommandResponse:
-    def __init__(
-            self,
-            embed: Embed|None = None,
-            file: File|None = None,
-            view: View|None = None,
-    ):
-        self.embed = embed
-        self.file = file
-        self.view = view
+    embed: Embed | None = None
+    file: File | None = None
+    view: View | None = None
 
     def set_delta_time(self, start_time):
         if self.embed:
