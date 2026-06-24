@@ -30,8 +30,6 @@ class Help(commands.Cog):
         for section in HELP_SECTIONS.values():
             embed.add_field(name=section.name, value=section.command_list(), inline=False)
 
-        embed.colour = DB.get_color(ctx)
-
         return CommandResponse(
             embed=embed,
             view=Help.get_view(),
@@ -67,7 +65,7 @@ class Help(commands.Cog):
                 embed = Embed(
                     title=section.name,
                     description=section.full_description(),
-                    color=DB.get_color(interaction))
+                )
 
                 return CommandResponse(
                     embed=embed,

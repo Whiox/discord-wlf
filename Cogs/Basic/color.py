@@ -88,7 +88,6 @@ class Color(commands.Cog):
             embed.add_field(name="Ошибка", value=f"Введённый вами цвет не существует - "
                                                  f"{color if color else custom_color}", inline=False)
             embed.add_field(name="Используйте конвертер", value="Используйте любой rgb to hex конвертер", inline=False)
-            embed.colour = DB.get_color(ctx)
 
         return CommandResponse(
             embed=embed,

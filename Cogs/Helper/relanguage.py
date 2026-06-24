@@ -36,18 +36,14 @@ class ReLanguage(commands.Cog):
             ctx: ApplicationContext,
             text: str,
     ):
-        private = DB.get_private(ctx)
-        if not ctx.response.is_done():
-            await ctx.defer(ephemeral=private)
-        embed = Embed()
-        embed.colour = DB.get_color(ctx)
-
         if any('а' <= ch <= 'я' or 'А' <= ch <= 'Я' or ch in "ёЁ" for ch in text):
             result = self.convert(text, self.RU_TO_EN)
         else:
             result = self.convert(text, self.EN_TO_RU)
 
-        embed.title = result
+        embed = Embed(
+            title=result,
+        )
 
         return CommandResponse(
             embed=embed,

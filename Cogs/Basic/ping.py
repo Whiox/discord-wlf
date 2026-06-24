@@ -26,7 +26,6 @@ class Ping(commands.Cog):
         ping_ms = round(ping * 1000, 2)
         ping_s = round(ping, 2)
         embed = Embed(title='Задержка бота')
-        embed.colour = DB.get_color(ctx)
         embed.add_field(name="Задержка до бота" ,value=f'{latency * 1000:.2f}мс/{latency:.2f}с', inline=False)
         embed.add_field(name="Задержка до базы", value=f'{ping_ms}мс/{ping_s:.2f}с', inline=False)
 

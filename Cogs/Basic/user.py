@@ -56,7 +56,6 @@ class UserInfo(commands.Cog):
             embed.set_image(url=fetched_user.banner.url)
 
         embed.set_thumbnail(url=avatar_url)
-        embed.colour = DB.get_color(ctx)
 
         return CommandResponse(
             embed=embed,
