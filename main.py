@@ -23,7 +23,6 @@ def setup_logging() -> None:
         level=logging.INFO,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         datefmt="%m/%d/%Y %I:%M:%S %p",
-        filename="logs/bot.log",
         handlers=[RotatingFileHandler("logs/bot.log", maxBytes=5 * 1024 * 1024, backupCount=3)]
     )
 
@@ -34,10 +33,13 @@ def main() -> None:
 
     bot = Bot(intents=Intents.default())
 
+    logger = logging.getLogger(__name__)
+
     for folderName in os.listdir('./Cogs'):
         for fileName in os.listdir(f'./Cogs/{folderName}'):
             if fileName.endswith('.py') and not fileName in ['util.py', 'error.py']:
                 bot.load_extension(f'Cogs.{folderName}.{fileName[:-3]}')
+                logger.info(f" - Cogs.{folderName}.{fileName[:-3]} loaded")
                 print(f" - Cogs.{folderName}.{fileName[:-3]} loaded")
 
     load_dotenv()
