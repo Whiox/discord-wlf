@@ -67,22 +67,27 @@ HELP_SECTIONS = {
             HelpCommand(
                 name="gif",
                 description=(
-                    "Конвертирует изображения PNG, JPEG и WebP "
+                    "Конвертирует из PNG, JPEG, WebP GIF."
                     "в GIF-файл."
                 ),
             ),
             HelpCommand(
                 name="png",
                 description=(
-                    "Конвертирует JPEG, WebP и первый кадр GIF "
+                    "Конвертирует из PNG, JPEG, WebP GIF."
                     "в PNG-изображение."
                 ),
             ),
             HelpCommand(
-                name="reply",
+                name="bubble",
                 description=(
-                    "Создаёт reply-GIF из изображений PNG, JPEG, WebP "
-                    "или GIF."
+                    "Создаёт bubble GIF из PNG, JPEG, WebP GIF."
+                ),
+            ),
+            HelpCommand(
+                name="bubble AI™",
+                description=(
+                    "Создаёт bubble AI™ GIF из PNG, JPEG, WebP GIF при помощи нейросети."
                 ),
             ),
         ),
