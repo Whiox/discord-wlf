@@ -87,19 +87,4 @@ HELP_SECTIONS = {
             ),
         ),
     ),
-
-    "war_thunder": HelpSection(
-        name="War Thunder",
-        description="Получить информацию о функциях War Thunder",
-        commands=(
-            HelpCommand(
-                name="squadron",
-                description="Ищет полк по названию.",
-            ),
-            HelpCommand(
-                name="stats",
-                description="Выводит статистику игрока по нику.",
-            ),
-        ),
-    ),
 }
