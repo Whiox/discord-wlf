@@ -87,4 +87,17 @@ HELP_SECTIONS = {
             ),
         ),
     ),
+
+    "helper": HelpSection(
+        name="Helper",
+        description="Получить информацию о вспомогательных функциях",
+        commands=(
+            HelpCommand(
+                name="relanguage",
+                description=(
+                    "Поменяет раскладку текста (рус -> англ или англ -> рус)."
+                ),
+            ),
+        ),
+    ),
 }
