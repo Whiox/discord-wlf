@@ -79,6 +79,12 @@ HELP_SECTIONS = {
                 ),
             ),
             HelpCommand(
+                name="filter",
+                        description=(
+                    "Добавляет фильтры на изображение"
+                ),
+            ),
+            HelpCommand(
                 name="bubble",
                 description=(
                     "Создаёт bubble GIF из PNG, JPEG, WebP GIF."
@@ -87,7 +93,7 @@ HELP_SECTIONS = {
             HelpCommand(
                 name="bubble AI™",
                 description=(
-                    "Создаёт bubble AI™ GIF из PNG, JPEG, WebP GIF при помощи нейросети."
+                    "Создаёт bubble GIF из PNG, JPEG, WebP GIF при помощи нейросети™."
                 ),
             ),
         ),

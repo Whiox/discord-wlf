@@ -4,7 +4,7 @@ from discord import Embed
 from src.settings import CommandResponse
 
 
-VALID_FORMATS = ['png', 'jpeg', 'jpg', 'webp', 'gif']
+VALID_FORMATS = ['png', 'jpeg', 'jpg', 'webp', 'gif', 'jfif']
 
 
 class BaseConverter:
