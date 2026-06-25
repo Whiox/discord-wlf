@@ -30,25 +30,7 @@ class BubbleAI(commands.Cog, BaseConverter):
         if is_valid is not True:
             return is_valid
 
-        file_bytes = await file.read()
-        result = self.model.predict_from_bytes(file_bytes)
-
-        output = BytesIO()
-        result.save(output, format="PNG")
-        output.seek(0)
-
-        discord_file = File(fp=output, filename=f"{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
-        image_url = f"attachment://{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif"
-        embed = Embed(
-            title="bubble AI™ GIF",
-            image=image_url,
-        )
-
-        return CommandResponse(
-            embed=embed,
-            file=discord_file,
-        )
-
+        return await self.process_file(file, ctx)
 
     @commands.message_command(
         name="Добавить пузырь AI™",
@@ -75,6 +57,9 @@ class BubbleAI(commands.Cog, BaseConverter):
         if is_valid is not True:
             return is_valid
 
+        return await self.process_file(file, ctx)
+
+    async def process_file(self, file, ctx):
         file_bytes = await file.read()
         result = self.model.predict_from_bytes(file_bytes)
 
@@ -93,6 +78,7 @@ class BubbleAI(commands.Cog, BaseConverter):
             embed=embed,
             file=discord_file,
         )
+
 
 
 def setup(bot):

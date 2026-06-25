@@ -29,24 +29,7 @@ class Gif(commands.Cog, BaseConverter):
         if is_valid is not True:
             return is_valid
 
-        file_bytes = await file.read()
-        with BytesIO(file_bytes) as byte_stream:
-            with Image.open(byte_stream) as image:
-                result = BytesIO()
-                image.save(result, format="GIF")
-                result.seek(0)
-
-        discord_file = File(fp=result, filename=f"{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
-        image_url = f"attachment://{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif"
-        embed = Embed(
-            title="GIF",
-            image=image_url,
-        )
-
-        return CommandResponse(
-            embed=embed,
-            file=discord_file,
-        )
+        return await self.process_file(file, ctx)
 
     @commands.message_command(
         name="Конвертация в GIF",
@@ -70,6 +53,9 @@ class Gif(commands.Cog, BaseConverter):
         if is_valid is not True:
             return is_valid
 
+        return await self.process_file(file, ctx)
+
+    async def process_file(self, file, ctx):
         file_bytes = await file.read()
         with BytesIO(file_bytes) as byte_stream:
             with Image.open(byte_stream) as image:

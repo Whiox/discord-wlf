@@ -30,20 +30,7 @@ class Bubble(commands.Cog, BaseConverter):
         if is_valid is not True:
             return is_valid
 
-        file_bytes = await file.read()
-        result = self.add_bubble(file_bytes, height)
-
-        discord_file = File(fp=result, filename=f"{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
-        image_url = f"attachment://{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif"
-        embed = Embed(
-            title="bubble GIF",
-            image=image_url,
-        )
-
-        return CommandResponse(
-            embed=embed,
-            file=discord_file,
-        )
+        return await self.process_file(file, ctx, height)
 
     @commands.message_command(
         name="Добавить пузырь на изображение",
@@ -70,8 +57,11 @@ class Bubble(commands.Cog, BaseConverter):
         if is_valid is not True:
             return is_valid
 
+        return await self.process_file(file, ctx)
+
+    async def process_file(self, file, ctx, height = 20):
         file_bytes = await file.read()
-        result = self.add_bubble(file_bytes)
+        result = self.add_bubble(file_bytes, height)
 
         discord_file = File(fp=result, filename=f"{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif")
         image_url = f"attachment://{ctx.user.id}_{file.filename.rsplit('.', 1)[0]}.gif"
@@ -84,8 +74,6 @@ class Bubble(commands.Cog, BaseConverter):
             embed=embed,
             file=discord_file,
         )
-
-
 
     @staticmethod
     def add_bubble(file_bytes, height = 20):
