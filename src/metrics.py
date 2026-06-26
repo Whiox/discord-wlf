@@ -1,5 +1,5 @@
 
-from prometheus_client import CollectorRegistry, Gauge
+from prometheus_client import CollectorRegistry, Counter
 
 from dotenv import load_dotenv
 import os
@@ -10,7 +10,7 @@ USE_PROMETHEUS = os.getenv("USE_PROMETHEUS", "False") == "True"
 PUSHGW = os.getenv("PUSHGW")
 
 registry = CollectorRegistry()
-commands_count = Gauge(
+commands_count = Counter(
     "commands_count",
     "Count of commands",
     [
@@ -20,7 +20,7 @@ commands_count = Gauge(
     registry=registry,
 )
 
-database_requests = Gauge(
+database_requests = Counter(
     "database_requests",
     "Count of database requests",
     [
