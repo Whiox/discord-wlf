@@ -8,7 +8,7 @@ services:
       - "8081"
 
   prometheus:
-    image: prom/prometheus
+    image: prom/prometheus:2.53.5
     profiles:
       - monitoring
     volumes:
