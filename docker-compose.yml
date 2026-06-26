@@ -1,0 +1,28 @@
+
+services:
+  discord:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    expose:
+      - "8081"
+
+  prometheus:
+    image: prom/prometheus
+    profiles:
+      - monitoring
+    volumes:
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"
+    depends_on:
+      - discord
+
+  grafana:
+    image: grafana/grafana:9.4.0
+    profiles:
+      - monitoring
+    ports:
+     - "3000:3000"
+    depends_on:
+      - prometheus
