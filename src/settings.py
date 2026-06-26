@@ -5,11 +5,13 @@ import random
 import logging
 
 from functools import wraps
-from src.database import Database
 from discord import IntegrationType, ApplicationContext, InteractionContextType, Embed, File
 from discord.ui import View
 
 from dataclasses import dataclass
+
+from src.database import Database
+from src.metrics import commands_count
 
 
 logger = logging.getLogger(__name__)
@@ -92,7 +94,8 @@ def process_command():
             try:
                 private = DB.get_private(ctx)
 
-                if not ctx.response.is_done(): await ctx.defer(ephemeral=private)
+                if not ctx.response.is_done():
+                    await ctx.defer(ephemeral=private)
 
                 start_time = time.time()
                 response: CommandResponse = await func(self, ctx, *args, **kwargs)
@@ -101,10 +104,14 @@ def process_command():
                 if response.embed:
                     response.embed.colour = DB.get_color(ctx)
 
+                commands_count.labels(command=func.__name__, status="ok").inc()
+
                 await ctx.respond(**response.process_response(), ephemeral=private)
 
             except Exception as e:
                 logger.exception(f"{func.__name__}: {e}")
+                commands_count.labels(command=func.__name__, status="error").inc()
+
                 if not ctx.response.is_done():
                     await ctx.respond("Произошла ошибка при выполнении команды.", ephemeral=True)
         return wrapper
@@ -119,9 +126,14 @@ def process_view():
                 start_time = time.time()
                 response: CommandResponse = await func(self, select, interaction, *args, **kwargs)
                 response.set_delta_time(start_time)
+
+                commands_count.labels(command=func.__name__, status="ok").inc()
+
                 await interaction.edit(**response.process_response())
             except Exception as e:
                 logger.exception(f"{func.__name__}: {e}")
+                commands_count.labels(command=func.__name__, status="error").inc()
+
                 if not interaction.response.is_done():
                     await interaction.respond("Произошла ошибка при выполнении команды.", ephemeral=True)
         return wrapper

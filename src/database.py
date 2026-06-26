@@ -6,6 +6,8 @@ from discord import ApplicationContext
 
 import logging
 
+from src.metrics import database_requests
+
 
 logger = logging.getLogger(__name__)
 
@@ -33,10 +35,12 @@ class Database:
             self.connection.commit()
             result = cursor.fetchall()
             cursor.close()
+
+            database_requests.labels(status="ok").inc()
             return result
         except Exception as error:
             logger.exception(f"{error}")
-            return None
+            database_requests.labels(status="error").inc()
 
     def get_ping(self, user_id):
         """Проверка скорости доступа к базе данных"""
