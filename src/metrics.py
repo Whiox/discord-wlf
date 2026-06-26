@@ -7,7 +7,6 @@ import os
 load_dotenv()
 
 USE_PROMETHEUS = os.getenv("USE_PROMETHEUS", "False") == "True"
-PUSHGW = os.getenv("PUSHGW")
 
 registry = CollectorRegistry()
 commands_count = Counter(
