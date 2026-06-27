@@ -103,7 +103,26 @@
             "properties": [
               {
                 "id": "displayName",
-                "value": "Total requests"
+                "value": "success"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "B"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "error"
+              },
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-red",
+                  "mode": "fixed"
+                }
               }
             ]
           }
@@ -135,10 +154,23 @@
             "uid": "prometheus"
           },
           "editorMode": "builder",
-          "expr": "commands_count_total",
+          "expr": "sum(commands_count_total{status=\"ok\"})",
+          "hide": false,
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "prometheus"
+          },
+          "editorMode": "builder",
+          "expr": "sum(commands_count_total{status!=\"ok\"})",
+          "hide": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "B"
         }
       ],
       "title": "Total requests",
@@ -261,7 +293,7 @@
             "uid": "prometheus"
           },
           "editorMode": "builder",
-          "expr": "rate(commands_count_total[1m])",
+          "expr": "sum(rate(commands_count_total{status=\"ok\"}[1m]))",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -272,7 +304,7 @@
             "uid": "prometheus"
           },
           "editorMode": "builder",
-          "expr": "rate(commands_count_total{status!=\"ok\"}[1m])",
+          "expr": "sum(rate(commands_count_total{status!=\"ok\"}[1m]))",
           "hide": false,
           "legendFormat": "__auto",
           "range": true,
@@ -412,7 +444,7 @@
             "uid": "prometheus"
           },
           "editorMode": "builder",
-          "expr": "database_requests_total",
+          "expr": "sum(database_requests_total{status=\"ok\"})",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -423,7 +455,7 @@
             "uid": "prometheus"
           },
           "editorMode": "builder",
-          "expr": "database_requests_total{status!=\"ok\"}",
+          "expr": "sum(database_requests_total{status!=\"ok\"})",
           "hide": false,
           "legendFormat": "__auto",
           "range": true,
@@ -550,7 +582,7 @@
             "uid": "prometheus"
           },
           "editorMode": "builder",
-          "expr": "rate(database_requests_total[1m])",
+          "expr": "sum(rate(database_requests_total{status=\"ok\"}[1m]))",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -561,7 +593,7 @@
             "uid": "prometheus"
           },
           "editorMode": "builder",
-          "expr": "rate(database_requests_total{status!=\"ok\"}[1m])",
+          "expr": "sum(rate(database_requests_total{status!=\"ok\"}[1m]))",
           "hide": false,
           "legendFormat": "__auto",
           "range": true,
