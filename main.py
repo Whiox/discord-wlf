@@ -36,8 +36,6 @@ def main() -> None:
     setup_logging()
     DB()
 
-    bot = Bot(intents=Intents.default())
-
     logger = logging.getLogger(__name__)
 
     for folderName in os.listdir('./Cogs'):
@@ -51,10 +49,13 @@ def main() -> None:
 
 
 if __name__ == '__main__':
+    bot = Bot(intents=Intents.default())
+
     threading.Thread(
         target=start_http_server,
         kwargs={
             "port": int(os.getenv("HTTP_SERVER_PORT", "8081")),
+            "bot": bot,
         },
         daemon=True,
     ).start()

@@ -25,10 +25,16 @@ class RequestHandler(BaseHTTPRequestHandler):
         handler()
 
     def handle_health(self):
-        self.send_response(HTTPStatus.OK)
-        self.send_header("Content-Type", "text/plain; charset=utf-8")
+        if ThreadingHTTPServer.bot.is_ready():
+            self.send_response(HTTPStatus.OK)
+            self.send_header("Content-Type", "text/plain; charset=utf-8")
+            self.end_headers()
+            self.wfile.write(b"ok")
+            return
+
+        self.send_response(HTTPStatus.SERVICE_UNAVAILABLE)
         self.end_headers()
-        self.wfile.write(b"ok")
+
 
     def handle_metrics(self):
         payload = generate_latest(registry)
@@ -42,6 +48,7 @@ class RequestHandler(BaseHTTPRequestHandler):
         return
 
 
-def start_http_server(port: int):
+def start_http_server(port: int, bot):
+    ThreadingHTTPServer.bot = bot
     server = ThreadingHTTPServer(("0.0.0.0", port), RequestHandler)
     server.serve_forever()
