@@ -6,6 +6,15 @@ services:
       dockerfile: Dockerfile
     expose:
       - "8081"
+    env_file:
+      - .env
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:8081/health', timeout=2)\"" ]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+      start_period: 30s
 
   prometheus:
     image: prom/prometheus:v2.53.5
@@ -16,7 +25,9 @@ services:
     ports:
       - "9090:9090"
     depends_on:
-      - discord
+      discord:
+        condition: service_healthy
+    restart: unless-stopped
 
   grafana:
     image: grafana/grafana:9.4.0
@@ -29,3 +40,4 @@ services:
      - "3000:3000"
     depends_on:
       - prometheus
+    restart: unless-stopped

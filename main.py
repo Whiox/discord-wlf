@@ -15,9 +15,7 @@ from discord import Bot, Intents
 from dotenv import load_dotenv
 
 from src.settings import DB
-from src.metrics import USE_PROMETHEUS, registry
-
-from prometheus_client import start_http_server
+from src.http_server import start_http_server
 
 
 def setup_logging() -> None:
@@ -53,15 +51,12 @@ def main() -> None:
 
 
 if __name__ == '__main__':
-
-    if USE_PROMETHEUS:
-        threading.Thread(
-            target=start_http_server,
-            kwargs={
-                "port": int(os.getenv("HTTP_PROMETHEUS_PORT", "8081")),
-                "registry": registry,
-            },
-            daemon=True,
-        ).start()
+    threading.Thread(
+        target=start_http_server,
+        kwargs={
+            "port": int(os.getenv("HTTP_SERVER_PORT", "8081")),
+        },
+        daemon=True,
+    ).start()
 
     main()

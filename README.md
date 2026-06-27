@@ -83,6 +83,7 @@
 Создайте `.env` на основе `.example.env`:
 
 ```env
+# # Bot settings
 TOKEN=
 
 DB_URI=
@@ -93,9 +94,15 @@ DB_USER=
 DB_PASSWORD=
 DB_SSL=REQUIRED
 
-USE_PROMETHEUS=True
-HTTP_PROMETHEUS_PORT=8081
+COLLECT_METRICS=True
+HTTP_SERVER_PORT=8081
+
+# # Compose settings
+# COLLECT_METRICS should be enabled too
 COMPOSE_PROFILES=monitoring
+
+# # For launch without grafana/prometheus
+#COMPOSE_PROFILES=
 ```
 
 ## Локальный запуск
