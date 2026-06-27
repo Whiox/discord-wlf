@@ -8,7 +8,7 @@ services:
       - "8081"
 
   prometheus:
-    image: prom/prometheus:2.53.5
+    image: prom/prometheus:v2.53.5
     profiles:
       - monitoring
     volumes:
@@ -22,6 +22,9 @@ services:
     image: grafana/grafana:9.4.0
     profiles:
       - monitoring
+    volumes:
+      - ./config/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./config/grafana/dashboards:/var/lib/grafana/dashboards:ro
     ports:
      - "3000:3000"
     depends_on:
