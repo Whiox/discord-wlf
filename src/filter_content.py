@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 
 @dataclass(frozen=True, slots=True)
-class FilterSettings:
+class FilterOptions:
     output: str = "png"
     blur: bool = False
     black_white: bool = False
