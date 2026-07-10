@@ -39,8 +39,8 @@ class Database:
             database_requests.labels(status="ok").inc()
             return result
         except Exception as error:
-            logger.exception(f"{error}")
             database_requests.labels(status="error").inc()
+            raise Exception
 
     def get_ping(self, user_id):
         """Проверка скорости доступа к базе данных"""

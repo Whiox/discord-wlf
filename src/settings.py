@@ -112,8 +112,7 @@ def process_command():
                 logger.exception(f"{func.__name__}: {e}")
                 commands_count.labels(command=func.__name__, status="error").inc()
 
-                if not ctx.response.is_done():
-                    await ctx.respond("Произошла ошибка при выполнении команды.", ephemeral=True)
+                await ctx.respond("Произошла ошибка при выполнении команды.", ephemeral=True)
         return wrapper
     return decorator
 
@@ -134,8 +133,7 @@ def process_view():
                 logger.exception(f"{func.__name__}: {e}")
                 commands_count.labels(command=func.__name__, status="error").inc()
 
-                if not interaction.response.is_done():
-                    await interaction.respond("Произошла ошибка при выполнении команды.", ephemeral=True)
+                await interaction.respond("Произошла ошибка при выполнении команды.", ephemeral=True)
         return wrapper
     return decorator
 
