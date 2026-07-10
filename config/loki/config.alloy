@@ -1,0 +1,19 @@
+loki.source.file "discord_bot_file" {
+  targets = [
+    {
+      __path__      = "/var/logs/discord/bot.log",
+      job           = "discord",
+      service_name  = "discord",
+      log_source    = "file",
+    },
+  ]
+
+  tail_from_end = false
+  forward_to    = [loki.write.local.receiver]
+}
+
+loki.write "local" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}

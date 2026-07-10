@@ -15,13 +15,46 @@ services:
       timeout: 3s
       retries: 3
       start_period: 30s
+    volumes:
+      - bot-logs:/bot/logs/
+
+
+  loki:
+    image: grafana/loki:3.7.3
+    profiles: ["logs"]
+    command: -config.file=/etc/loki/loki-config.yaml
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./config/loki/loki-config.yaml:/etc/loki/loki-config.yaml:ro
+      - loki-data:/loki
+    depends_on:
+      discord:
+        condition: service_healthy
+    restart: unless-stopped
+
+
+  alloy:
+    image: grafana/alloy:v1.17.1
+    profiles: ["logs"]
+    command: ["run", "/etc/alloy/config.alloy", "--server.http.listen-addr=0.0.0.0:12345"]
+    volumes:
+      - ./config/loki/config.alloy:/etc/alloy/config.alloy:ro
+      - bot-logs:/var/logs/discord:ro
+      - alloy-data:/var/lib/alloy/data
+    ports:
+      - "12345:12345"
+    depends_on:
+      loki:
+        condition: service_started
+    restart: unless-stopped
+
 
   prometheus:
     image: prom/prometheus:v2.53.5
-    profiles:
-      - monitoring
+    profiles: ["metrics"]
     volumes:
-      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./config/prometheus/prometheus-config.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus-data:/prometheus
     ports:
       - "9090:9090"
@@ -30,21 +63,37 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
+
   grafana:
     image: grafana/grafana:9.4.0
-    profiles:
-      - monitoring
+    profiles: ["logs", "metrics"]
     volumes:
       - ./config/grafana/provisioning:/etc/grafana/provisioning:ro
       - ./config/grafana/dashboards:/var/lib/grafana/dashboards:ro
     ports:
      - "3000:3000"
-    depends_on:
-      - prometheus
     environment:
       GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USERNAME}
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
     restart: unless-stopped
+    depends_on:
+      discord:
+        condition: service_healthy
+
+      loki:
+        condition: service_started
+        required: false
+
+      alloy:
+        condition: service_started
+        required: false
+
+      prometheus:
+        condition: service_started
+        required: false
 
 volumes:
+  bot-logs:
+  loki-data:
+  alloy-data:
   prometheus-data:
